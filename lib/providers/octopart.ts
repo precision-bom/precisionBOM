@@ -2,17 +2,61 @@ import { ProviderResult } from "@/types/bom";
 import {
   PartProvider,
   OctopartSearchResponse,
-  OctopartPart,
 } from "./types";
 
-const OCTOPART_API_URL = "https://octopart.com/api/v4/endpoint";
+const NEXAR_TOKEN_URL = "https://identity.nexar.com/connect/token";
+const NEXAR_API_URL = "https://api.nexar.com/graphql";
+
+// Token cache for OAuth
+let cachedToken: { token: string; expiresAt: number } | null = null;
 
 export class OctopartProvider implements PartProvider {
   name = "octopart";
-  private apiKey: string;
+  private clientId: string;
+  private clientSecret: string;
 
-  constructor(apiKey?: string) {
-    this.apiKey = apiKey || process.env.OCTOPART_API_KEY || "";
+  constructor() {
+    this.clientId = process.env.OCTOPART_CLIENT_ID || "";
+    this.clientSecret = process.env.OCTOPART_CLIENT_SECRET || "";
+  }
+
+  private async getAccessToken(): Promise<string> {
+    // Check if we have a valid cached token (with 60s buffer)
+    if (cachedToken && cachedToken.expiresAt > Date.now() + 60000) {
+      return cachedToken.token;
+    }
+
+    if (!this.clientId || !this.clientSecret) {
+      throw new Error("Octopart OAuth credentials not configured");
+    }
+
+    const response = await fetch(NEXAR_TOKEN_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        grant_type: "client_credentials",
+        client_id: this.clientId,
+        client_secret: this.clientSecret,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`OAuth token request failed: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+
+    // Cache the token
+    cachedToken = {
+      token: data.access_token,
+      expiresAt: Date.now() + (data.expires_in * 1000),
+    };
+
+    console.log("Obtained new Octopart OAuth token");
+    return cachedToken.token;
   }
 
   async search(query: string): Promise<ProviderResult[]> {
@@ -25,28 +69,28 @@ export class OctopartProvider implements PartProvider {
   }
 
   private async executeSearch(query: string): Promise<ProviderResult[]> {
-    if (!this.apiKey) {
-      console.warn("No Octopart API key configured, returning mock data");
+    if (!this.clientId || !this.clientSecret) {
+      console.warn("No Octopart OAuth credentials configured, returning mock data");
       return this.getMockResults(query);
     }
 
     const graphqlQuery = `
       query Search($q: String!) {
-        search(q: $q, limit: 10) {
+        supSearch(q: $q, limit: 10) {
           results {
             part {
               mpn
               manufacturer {
                 name
               }
-              short_description
+              shortDescription
               sellers {
                 company {
                   name
                 }
                 offers {
-                  click_url
-                  inventory_level
+                  clickUrl
+                  inventoryLevel
                   moq
                   prices {
                     price
@@ -62,11 +106,13 @@ export class OctopartProvider implements PartProvider {
     `;
 
     try {
-      const response = await fetch(OCTOPART_API_URL, {
+      const token = await this.getAccessToken();
+
+      const response = await fetch(NEXAR_API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${this.apiKey}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           query: graphqlQuery,
@@ -75,10 +121,17 @@ export class OctopartProvider implements PartProvider {
       });
 
       if (!response.ok) {
-        throw new Error(`Octopart API error: ${response.status}`);
+        const errorText = await response.text();
+        throw new Error(`Nexar API error: ${response.status} - ${errorText}`);
       }
 
-      const data: OctopartSearchResponse = await response.json();
+      const data = await response.json();
+
+      if (data.errors) {
+        console.error("GraphQL errors:", data.errors);
+        throw new Error(data.errors[0]?.message || "GraphQL error");
+      }
+
       return this.transformResults(data);
     } catch (error) {
       console.error("Octopart search failed:", error);
@@ -86,15 +139,33 @@ export class OctopartProvider implements PartProvider {
     }
   }
 
-  private transformResults(data: OctopartSearchResponse): ProviderResult[] {
+  private transformResults(data: { data: { supSearch: { results: Array<{ part: {
+    mpn: string;
+    manufacturer: { name: string };
+    shortDescription: string;
+    sellers: Array<{
+      company: { name: string };
+      offers: Array<{
+        clickUrl: string;
+        inventoryLevel: number;
+        moq: number | null;
+        prices: Array<{ price: number; currency: string; quantity: number }>;
+      }>;
+    }>;
+  } }> } } }): ProviderResult[] {
     const results: ProviderResult[] = [];
 
-    for (const result of data.data.search.results) {
+    if (!data.data?.supSearch?.results) {
+      return results;
+    }
+
+    for (const result of data.data.supSearch.results) {
       const part = result.part;
+      if (!part.sellers) continue;
 
       for (const seller of part.sellers) {
         for (const offer of seller.offers) {
-          if (offer.prices.length === 0) continue;
+          if (!offer.prices || offer.prices.length === 0) continue;
 
           // Get the lowest price tier
           const lowestPrice = offer.prices.reduce((min, p) =>
@@ -103,15 +174,15 @@ export class OctopartProvider implements PartProvider {
 
           results.push({
             partNumber: part.mpn,
-            manufacturer: part.manufacturer.name,
-            description: part.short_description,
+            manufacturer: part.manufacturer?.name || "Unknown",
+            description: part.shortDescription || "",
             price: lowestPrice.price,
             currency: lowestPrice.currency,
-            stock: offer.inventory_level,
+            stock: offer.inventoryLevel || 0,
             minQuantity: offer.moq || 1,
             provider: this.name,
-            distributor: seller.company.name,
-            url: offer.click_url,
+            distributor: seller.company?.name || "Unknown",
+            url: offer.clickUrl || "",
           });
         }
       }
@@ -122,7 +193,7 @@ export class OctopartProvider implements PartProvider {
   }
 
   private getMockResults(query: string): ProviderResult[] {
-    // Return mock data when API key is not configured
+    // Return mock data when credentials are not configured
     return [
       {
         partNumber: query.toUpperCase(),
