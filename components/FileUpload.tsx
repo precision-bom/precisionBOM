@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useRef, DragEvent } from "react";
-import { BomItem } from "@/types/bom";
+import { BomSuggestionResult } from "@/types/bom";
 import { EXAMPLE_BOMS, ExampleBom } from "@/lib/examples";
 
 interface FileUploadProps {
-  onBomParsed: (items: BomItem[]) => void;
+  onSuggestionsReady: (result: BomSuggestionResult) => void;
 }
 
-export default function FileUpload({ onBomParsed }: FileUploadProps) {
+export default function FileUpload({ onSuggestionsReady }: FileUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,9 +53,9 @@ export default function FileUpload({ onBomParsed }: FileUploadProps) {
 
     try {
       const content = await file.text();
-      await parseBom(content);
+      await suggestBoms(content);
     } catch (err) {
-      setError("Failed to read file");
+      setError(err instanceof Error ? err.message : "Failed to read file");
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -72,30 +72,31 @@ export default function FileUpload({ onBomParsed }: FileUploadProps) {
     setError(null);
 
     try {
-      await parseBom(textInput);
+      await suggestBoms(textInput);
       setTextInput("");
     } catch (err) {
-      setError("Failed to parse BOM");
+      setError(err instanceof Error ? err.message : "Failed to process BOM");
       console.error(err);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const parseBom = async (csvContent: string) => {
-    const response = await fetch("/api/parse-bom", {
+  const suggestBoms = async (csvContent: string) => {
+    const response = await fetch("/api/suggest-boms", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ csvContent }),
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      throw new Error("Parse failed");
+      throw new Error(data.error || "Failed to generate suggestions");
     }
 
-    const data = await response.json();
-    if (data.items && data.items.length > 0) {
-      onBomParsed(data.items);
+    if (data.originalItems && data.originalItems.length > 0) {
+      onSuggestionsReady(data);
     } else {
       setError("No valid BOM items found in the file");
     }
@@ -105,9 +106,9 @@ export default function FileUpload({ onBomParsed }: FileUploadProps) {
     setIsLoading(true);
     setError(null);
     try {
-      await parseBom(example.csv);
+      await suggestBoms(example.csv);
     } catch (err) {
-      setError("Failed to load example");
+      setError(err instanceof Error ? err.message : "Failed to load example");
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -139,7 +140,10 @@ export default function FileUpload({ onBomParsed }: FileUploadProps) {
         />
         <div className="text-gray-500">
           {isLoading ? (
-            <span>Processing...</span>
+            <div className="flex flex-col items-center gap-2">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+              <span>Searching distributors...</span>
+            </div>
           ) : (
             <>
               <p className="text-lg mb-2">Drop CSV file here</p>
@@ -165,13 +169,21 @@ export default function FileUpload({ onBomParsed }: FileUploadProps) {
         onChange={(e) => setTextInput(e.target.value)}
         placeholder="Paste CSV content here...&#10;&#10;Example:&#10;Part Number,Description,Qty,Manufacturer,MPN&#10;R1,10k Resistor,10,Yageo,RC0603FR-0710KL"
         className="w-full h-32 px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        disabled={isLoading}
       />
       <button
         onClick={handleTextSubmit}
         disabled={isLoading || !textInput.trim()}
-        className="mt-3 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+        className="mt-3 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium"
       >
-        {isLoading ? "Processing..." : "Parse BOM"}
+        {isLoading ? (
+          <span className="flex items-center justify-center gap-2">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+            Searching distributors...
+          </span>
+        ) : (
+          "Suggest Concrete BOMs"
+        )}
       </button>
 
       {/* Error message */}

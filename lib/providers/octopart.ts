@@ -1,8 +1,5 @@
 import { ProviderResult } from "@/types/bom";
-import {
-  PartProvider,
-  OctopartSearchResponse,
-} from "./types";
+import { PartProvider } from "./types";
 
 const NEXAR_TOKEN_URL = "https://identity.nexar.com/connect/token";
 const NEXAR_API_URL = "https://api.nexar.com/graphql";
@@ -70,8 +67,7 @@ export class OctopartProvider implements PartProvider {
 
   private async executeSearch(query: string): Promise<ProviderResult[]> {
     if (!this.clientId || !this.clientSecret) {
-      console.warn("No Octopart OAuth credentials configured, returning mock data");
-      return this.getMockResults(query);
+      throw new Error("Octopart OAuth credentials not configured. Set OCTOPART_CLIENT_ID and OCTOPART_CLIENT_SECRET.");
     }
 
     const graphqlQuery = `
@@ -105,38 +101,33 @@ export class OctopartProvider implements PartProvider {
       }
     `;
 
-    try {
-      const token = await this.getAccessToken();
+    const token = await this.getAccessToken();
 
-      const response = await fetch(NEXAR_API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          query: graphqlQuery,
-          variables: { q: query },
-        }),
-      });
+    const response = await fetch(NEXAR_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        query: graphqlQuery,
+        variables: { q: query },
+      }),
+    });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Nexar API error: ${response.status} - ${errorText}`);
-      }
-
-      const data = await response.json();
-
-      if (data.errors) {
-        console.error("GraphQL errors:", data.errors);
-        throw new Error(data.errors[0]?.message || "GraphQL error");
-      }
-
-      return this.transformResults(data);
-    } catch (error) {
-      console.error("Octopart search failed:", error);
-      return this.getMockResults(query);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Nexar API error: ${response.status} - ${errorText}`);
     }
+
+    const data = await response.json();
+
+    if (data.errors) {
+      console.error("GraphQL errors:", data.errors);
+      throw new Error(data.errors[0]?.message || "GraphQL error");
+    }
+
+    return this.transformResults(data);
   }
 
   private transformResults(data: { data: { supSearch: { results: Array<{ part: {
@@ -173,7 +164,7 @@ export class OctopartProvider implements PartProvider {
           );
 
           results.push({
-            partNumber: part.mpn,
+            mpn: part.mpn,
             manufacturer: part.manufacturer?.name || "Unknown",
             description: part.shortDescription || "",
             price: lowestPrice.price,
@@ -190,47 +181,5 @@ export class OctopartProvider implements PartProvider {
 
     // Sort by price
     return results.sort((a, b) => a.price - b.price);
-  }
-
-  private getMockResults(query: string): ProviderResult[] {
-    // Return mock data when credentials are not configured
-    return [
-      {
-        partNumber: query.toUpperCase(),
-        manufacturer: "Example Mfg",
-        description: `Mock result for "${query}"`,
-        price: 1.25,
-        currency: "USD",
-        stock: 1000,
-        minQuantity: 1,
-        provider: this.name,
-        distributor: "DigiKey",
-        url: "https://www.digikey.com",
-      },
-      {
-        partNumber: query.toUpperCase(),
-        manufacturer: "Example Mfg",
-        description: `Mock result for "${query}"`,
-        price: 1.15,
-        currency: "USD",
-        stock: 500,
-        minQuantity: 10,
-        provider: this.name,
-        distributor: "Mouser",
-        url: "https://www.mouser.com",
-      },
-      {
-        partNumber: query.toUpperCase(),
-        manufacturer: "Example Mfg",
-        description: `Mock result for "${query}"`,
-        price: 0.95,
-        currency: "USD",
-        stock: 2500,
-        minQuantity: 100,
-        provider: this.name,
-        distributor: "Arrow",
-        url: "https://www.arrow.com",
-      },
-    ];
   }
 }

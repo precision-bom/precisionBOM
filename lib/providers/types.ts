@@ -1,5 +1,8 @@
 import { ProviderResult } from "@/types/bom";
 
+/**
+ * Generic part provider interface - implement this for each distributor/aggregator
+ */
 export interface PartProvider {
   name: string;
 
@@ -14,41 +17,44 @@ export interface PartProvider {
   searchByMPN(mpn: string, manufacturer?: string): Promise<ProviderResult[]>;
 }
 
-export interface OctopartSearchResponse {
-  data: {
-    search: {
-      results: OctopartPart[];
-    };
-  };
-}
+/**
+ * Generic offer from any provider - normalized structure
+ */
+export interface PartOffer {
+  // Part identification
+  mpn: string;
+  manufacturer: string;
+  description: string;
 
-export interface OctopartPart {
-  part: {
-    mpn: string;
-    manufacturer: {
-      name: string;
-    };
-    short_description: string;
-    sellers: OctopartSeller[];
-  };
-}
-
-export interface OctopartSeller {
-  company: {
-    name: string;
-  };
-  offers: OctopartOffer[];
-}
-
-export interface OctopartOffer {
-  click_url: string;
-  inventory_level: number;
-  moq: number | null;
-  prices: OctopartPrice[];
-}
-
-export interface OctopartPrice {
+  // Pricing
   price: number;
   currency: string;
+  priceBreaks?: PriceBreak[];
+
+  // Availability
+  stock: number;
+  minOrderQuantity: number;
+  leadTimeDays?: number;
+
+  // Source
+  provider: string;
+  distributor: string;
+  distributorPartNumber?: string;
+  url: string;
+}
+
+/**
+ * Price break for volume pricing
+ */
+export interface PriceBreak {
   quantity: number;
+  price: number;
+}
+
+/**
+ * Search results from a provider - groups offers by part
+ */
+export interface PartSearchResult {
+  query: string;
+  offers: PartOffer[];
 }
