@@ -61,10 +61,23 @@
 | Sponsor | Integration Status | Description |
 |---------|-------------------|-------------|
 | **Apify** | LIVE | Market Intelligence Agent - scrapes news, manufacturer sites, trade publications for supply chain insights |
-| Cline | LIVE | AI-powered code generation - built 17,149 lines of code across 4 deployments |
-| OpenAI + CrewAI | LIVE | Multi-agent orchestration with GPT-4o for inference |
-| Rilo | LIVE | Lead acquisition automation |
-| AI Native Studio | LIVE | Rapid prototyping and code quality analysis |
+| **Cline** | LIVE | AI-assisted coding - **20,944+ LoC across 134 files and 4 deployments in just 30 hours** |
+| **OpenAI** | LIVE | GPT-5-nano for multi-agent inference - faster than running CrewAI agents directly with older models |
+| **CrewAI** | LIVE | Multi-agent orchestration framework - Engineering, Sourcing, Finance, Market Intel agents |
+| **Rilo** | LIVE | Lead acquisition automation - email signup workflows and prospect enrichment |
+| **AI Native Studio** | LIVE | Rapid prototyping and code quality analysis during development |
+
+### How We Used These Tools
+
+**Cline** - Our secret weapon for velocity. Integrated 4 separate deployments (Next.js web app, Python agent service, Solidity blockchain contracts, and documentation) in a single 30-hour hackathon sprint. Cline helped us maintain consistency across TypeScript, Python, and Solidity codebases.
+
+**OpenAI GPT-5-nano** - We initially tried running CrewAI agents directly with older models, but GPT-5-nano was significantly faster while maintaining quality. The speed difference was critical for real-time BOM analysis.
+
+**Rilo** - Automated our lead capture pipeline. When users sign up via the landing page, Rilo enriches their profiles and triggers follow-up workflows.
+
+**AI Native Studio** - Used for rapid prototyping of agent architectures and code quality validation during development.
+
+**Apify** - Powers our Market Intelligence Agent with real-time web scraping of supply chain news, manufacturer announcements, and shortage alerts.
 
 ## Team
 
