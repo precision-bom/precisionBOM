@@ -85,34 +85,40 @@ function ASCIIFeatureCard({
   title,
   description,
   delay = 0,
+  href,
 }: {
   title: string;
   description: string;
   delay?: number;
+  href?: string;
 }) {
+  const content = (
+    <div className="border-4 border-white bg-black p-0 hover:border-green-500 transition-all duration-300 group relative overflow-hidden cursor-pointer">
+      {/* Subtle glow on hover */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-green-500/5" />
+
+      {/* Animated corner accent */}
+      <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-t-green-500 border-l-[20px] border-l-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+      <pre className="font-mono text-xs whitespace-pre p-4 leading-tight relative z-10">
+        <span className="text-white">{`┌${"─".repeat(title.length + 2)}┐`}</span>
+        {"\n"}
+        <span className="text-white">{`│ ${title} │`}</span>
+        <span className="text-green-500 group-hover:animate-pulse">──────●</span>
+        {"\n"}
+        <span className="text-white">{`└${"─".repeat(title.length + 2)}┘`}</span>
+      </pre>
+      <div className="px-4 pb-4 relative z-10">
+        <p className="font-sans text-sm text-neutral-400 group-hover:text-neutral-300 transition-colors leading-relaxed">
+          {description}
+        </p>
+      </div>
+    </div>
+  );
+
   return (
     <RevealOnScroll delay={delay}>
-      <div className="border-4 border-white bg-black p-0 hover:border-green-500 transition-all duration-300 group relative overflow-hidden">
-        {/* Subtle glow on hover */}
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-green-500/5" />
-
-        {/* Animated corner accent */}
-        <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-t-green-500 border-l-[20px] border-l-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-
-        <pre className="font-mono text-xs whitespace-pre p-4 leading-tight relative z-10">
-          <span className="text-white">{`┌${"─".repeat(title.length + 2)}┐`}</span>
-          {"\n"}
-          <span className="text-white">{`│ ${title} │`}</span>
-          <span className="text-green-500 group-hover:animate-pulse">──────●</span>
-          {"\n"}
-          <span className="text-white">{`└${"─".repeat(title.length + 2)}┘`}</span>
-        </pre>
-        <div className="px-4 pb-4 relative z-10">
-          <p className="font-sans text-sm text-neutral-400 group-hover:text-neutral-300 transition-colors leading-relaxed">
-            {description}
-          </p>
-        </div>
-      </div>
+      {href ? <Link href={href}>{content}</Link> : content}
     </RevealOnScroll>
   );
 }
@@ -299,21 +305,25 @@ export default function LandingPage() {
               delay={0}
               title="LIVE INVENTORY"
               description="Real-time stock levels direct from DigiKey. See what's actually available right now."
+              href="/features#live-inventory"
             />
             <ASCIIFeatureCard
               delay={100}
               title="AI SUGGESTIONS"
               description="Intelligent alternates and quantity optimization powered by machine learning models."
+              href="/features#ai-suggestions"
             />
             <ASCIIFeatureCard
               delay={200}
               title="PRICE BREAKS"
               description="See all quantity tier pricing at a glance. Make informed decisions on order quantities."
+              href="/features#price-breaks"
             />
             <ASCIIFeatureCard
               delay={300}
               title="ONE-CLICK EXPORT"
               description="Export to CSV or add directly to your DigiKey cart with a single click."
+              href="/features#export"
             />
           </div>
 

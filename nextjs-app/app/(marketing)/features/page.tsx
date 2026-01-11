@@ -125,7 +125,7 @@ export default function FeaturesPage() {
       </header>
 
       {/* Real-time Inventory Section */}
-      <section className="max-w-6xl mx-auto px-6 py-20 border-b-4 border-white">
+      <section id="live-inventory" className="max-w-6xl mx-auto px-6 py-20 border-b-4 border-white scroll-mt-20">
         <ASCIIFeatureSection
           delay={100}
           number="01"
@@ -166,7 +166,7 @@ export default function FeaturesPage() {
       </section>
 
       {/* AI Suggestions Section */}
-      <section className="max-w-6xl mx-auto px-6 py-20 border-b-4 border-white">
+      <section id="ai-suggestions" className="max-w-6xl mx-auto px-6 py-20 border-b-4 border-white scroll-mt-20">
         <ASCIIFeatureSection
           delay={100}
           reverse
@@ -209,7 +209,7 @@ export default function FeaturesPage() {
       </section>
 
       {/* BOM Intelligence Section */}
-      <section className="max-w-6xl mx-auto px-6 py-20 border-b-4 border-white">
+      <section id="price-breaks" className="max-w-6xl mx-auto px-6 py-20 border-b-4 border-white scroll-mt-20">
         <ASCIIFeatureSection
           delay={100}
           number="03"
@@ -253,7 +253,7 @@ export default function FeaturesPage() {
       </section>
 
       {/* Export Section */}
-      <section className="max-w-6xl mx-auto px-6 py-20 border-b-4 border-white">
+      <section id="export" className="max-w-6xl mx-auto px-6 py-20 border-b-4 border-white scroll-mt-20">
         <ASCIIFeatureSection
           delay={100}
           reverse
