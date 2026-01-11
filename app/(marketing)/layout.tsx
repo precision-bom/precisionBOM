@@ -1,4 +1,5 @@
 import Link from "next/link";
+import WalletConnect from "@/components/WalletConnect";
 
 export default function MarketingLayout({
   children,
@@ -60,6 +61,8 @@ export default function MarketingLayout({
 
             {/* Auth Buttons */}
             <div className="flex items-center gap-3">
+              <WalletConnect />
+              <div className="h-4 w-[1px] bg-substrate-800 mx-1" />
               <Link
                 href="/login"
                 className="text-sm px-4 py-2 text-substrate-400 hover:text-white transition-colors"
