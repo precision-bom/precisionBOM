@@ -18,6 +18,7 @@
 | [QUICK_REFERENCE.md](./QUICK_REFERENCE.md) | Print-friendly card for the event |
 | [KEYNOTE_CONTENT.md](./KEYNOTE_CONTENT.md) | Content for remaining Keynote slides |
 | [INTEGRATIONS.md](./INTEGRATIONS.md) | Future integrations (Apify, Rilo, AI Native) |
+| [LAUNCH_VIDEO_SCRIPT.md](./LAUNCH_VIDEO_SCRIPT.md) | 4-person team video script |
 
 ## Demo Data Files
 
