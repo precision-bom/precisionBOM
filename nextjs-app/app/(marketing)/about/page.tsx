@@ -191,7 +191,7 @@ export default function AboutPage() {
 
               <p className="text-gray-500 text-sm">
                 Or open an issue on{" "}
-                <a href="https://github.com/precisionbom" className="text-green-500 hover:text-green-300 underline transition-colors duration-200">
+                <a href="https://github.com/precision-bom/precisionBOM" className="text-green-500 hover:text-green-300 underline transition-colors duration-200">
                   GitHub
                 </a>
                 {" "}- we read everything.
