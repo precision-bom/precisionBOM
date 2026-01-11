@@ -1,0 +1,21 @@
+Reference Designators,Quantity,MPN,Manufacturer,Description,Package,Value
+U1,1,ADS1299-6PAGR,Texas Instruments,8-Channel 24-Bit ADC for Biopotential,TQFP-64,
+U2,1,STM32H743ZIT6,STMicroelectronics,ARM Cortex-M7 MCU 480MHz 2MB Flash,LQFP-144,
+U3,1,TPS7A4901DGNT,Texas Instruments,Ultra-Low-Noise LDO 3.3V 150mA,MSOP-8,3.3V
+U4,1,TPS7A8801DSGR,Texas Instruments,Ultra-Low-Noise LDO 1.8V 1A,WSON-8,1.8V
+U5,1,INA333AIDGKR,Texas Instruments,Micro-Power Instrumentation Amplifier,VSSOP-8,
+U6,1,ISO7741FDBQR,Texas Instruments,Quad Digital Isolator 100Mbps,SSOP-16,
+U7,1,CP2102N-A02-GQFN24,Silicon Labs,USB-to-UART Bridge,QFN-24,
+U8,1,W25Q128JVSIQ,Winbond,128Mbit SPI Flash,SOIC-8,
+C1-C10,10,GRM188R71H104KA93D,Murata,MLCC 0.1uF 50V X7R,0603,100nF
+C11-C15,5,GRM21BR61E106KA73L,Murata,MLCC 10uF 25V X5R,0805,10uF
+C16-C20,5,T520B107M006ATE070,KEMET,Tantalum 100uF 6.3V,Case-B,100uF
+R1-R8,8,RC0603FR-0710KL,Yageo,Thin Film Resistor 10K 1%,0603,10K
+R9-R12,4,RC0603FR-07100RL,Yageo,Thin Film Resistor 100R 1%,0603,100R
+R13-R16,4,ERA-3AEB4991V,Panasonic,Precision Resistor 4.99K 0.1%,0603,4.99K
+L1,1,LQH32CN100K53L,Murata,Ferrite Bead 10uH 700mA,1210,10uH
+J1,1,10118192-0001LF,Amphenol,USB Type-C Receptacle,SMD,
+J2,1,M80-5101042,Harwin,Medical Grade Header 10-pos,2.00mm,
+ESD1-ESD4,4,PESD5V0S1BL,Nexperia,ESD Protection TVS,SOD-882,5V
+Y1,1,ECS-240-20-30B-DU,ECS,Crystal 24MHz 20ppm,HC49,24MHz
+LED1-LED3,3,LTST-C171KGKT,Lite-On,Green LED 0603,0603,Green

@@ -1,0 +1,11 @@
+Part Number,Description,Quantity,Manufacturer,MPN
+R1,10K Resistor 0805 1%,100,Yageo,RC0805FR-0710KL
+C1,100uF Electrolytic 25V,50,Panasonic,ECA-1EM101
+U1,ATmega328P Microcontroller,10,Microchip,ATMEGA328P-PU
+LED1,Red LED 3mm,25,Kingbright,WP7113ID
+Q1,2N2222 NPN Transistor,20,ON Semiconductor,2N2222A
+C2,0.1uF Ceramic 50V 0805,200,Samsung,CL21B104KBCNNNC
+J1,USB Type-C Connector,15,Amphenol,12401610E4#2A
+Y1,16MHz Crystal,10,Abracon,ABL-16.000MHZ-B2
+IC1,LM7805 Voltage Regulator,10,Texas Instruments,LM7805CT
+D1,1N4007 Rectifier Diode,30,Vishay,1N4007-E3/54
