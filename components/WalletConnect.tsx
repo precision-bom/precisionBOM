@@ -7,11 +7,16 @@ interface EthereumProvider {
   request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
 }
 
+const VAULT_ADDRESS = "0xd24fD54959A2303407505dC602e94BCdA5F4AcDD";
+const SUBSCRIPTION_FEE = "0.001"; // ETH
+
 const CLICKWRAP_MESSAGE = (nonce: string) => `PrecisionBOM Terminal Access & Sourcing Agreement:
 By signing this cryptographic strike, I acknowledge:
 1. Authorization to interact with the PrecisionBOM forensic substrate.
 2. Acceptance of the 0.001 ETH monthly subscription fee.
 3. Consent to the recording of all sourcing strikes within ERC-7827.
+NOTE: If no active substrate record is found for this identity, 
+a transaction request for 0.001 ETH will follow to initialize access.
 
 Session Nonce: ${nonce}`;
 
@@ -19,6 +24,28 @@ export default function WalletConnect() {
   const [address, setAddress] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const paySubscription = async (userAddress: string, provider: ethers.BrowserProvider) => {
+    try {
+      setStatus("Escalating to Payment...");
+      const signer = await provider.getSigner();
+      const tx = await signer.sendTransaction({
+        to: VAULT_ADDRESS,
+        value: ethers.parseEther(SUBSCRIPTION_FEE)
+      });
+
+      setStatus("Processing Strike...");
+      await tx.wait();
+      setStatus("Payment Confirmed. Syncing...");
+      
+      // Final re-check to trigger server-side auto-write
+      await checkAccess(userAddress);
+    } catch (error: unknown) {
+      const err = error as Error;
+      console.error("Payment Error:", err);
+      setStatus("Payment Cancelled/Failed");
+    }
+  };
 
   const checkAccess = async (userAddress: string) => {
     setLoading(true);
@@ -44,14 +71,15 @@ export default function WalletConnect() {
       if (response.status === 200) {
         setStatus(`Active (Until: ${data.expiration})`);
       } else if (response.status === 402) {
-        setStatus(`Payment Required (x402)`);
+        // AUTOMATED ESCALATION
+        await paySubscription(userAddress, provider);
       } else {
         setStatus(`Error: ${data.error}`);
       }
     } catch (error: unknown) {
       const err = error as Error;
       console.error("Access Check Error:", err);
-      setStatus("Failed to verify identity");
+      setStatus("Verification Failed");
     } finally {
       setLoading(false);
     }
@@ -91,7 +119,7 @@ export default function WalletConnect() {
         <div className="flex items-center gap-3">
           <div className="flex flex-col items-end border-r border-substrate-800 pr-3">
             <span className="text-[10px] text-trace-500 uppercase tracking-widest font-bold">
-              {loading ? "Verifying..." : status}
+              {status}
             </span>
             <span className="text-xs text-white opacity-70">
               {address.slice(0, 6)}...{address.slice(-4)}
@@ -110,7 +138,7 @@ export default function WalletConnect() {
           disabled={loading}
           className="text-sm px-4 py-2 border border-trace-500/30 hover:border-trace-500 text-trace-500 rounded transition-all hover:bg-trace-500/10 disabled:opacity-50"
         >
-          {loading ? "Connecting..." : "Connect Wallet"}
+          {loading ? "Forensic Boot..." : "Connect Wallet"}
         </button>
       )}
     </div>
