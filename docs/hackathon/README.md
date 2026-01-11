@@ -16,6 +16,7 @@
 | [TALKING_POINTS.md](./TALKING_POINTS.md) | Key messages for judges/networking |
 | [RECORDING_SCRIPT.md](./RECORDING_SCRIPT.md) | Script for pitch video recording |
 | [QUICK_REFERENCE.md](./QUICK_REFERENCE.md) | Print-friendly card for the event |
+| [KEYNOTE_CONTENT.md](./KEYNOTE_CONTENT.md) | Content for remaining Keynote slides |
 
 ## Demo Data Files
 
@@ -53,8 +54,9 @@
 
 "Hardware engineers spend 40+ hours per project manually sourcing components. Supply chain volatility, compliance requirements, and budget constraints make this painful. PrecisionBOM uses a multi-agent AI system - Engineering, Sourcing, and Finance agents working in parallel - to analyze your BOM, search real-time inventory from DigiKey/Mouser/Octopart, and generate optimized sourcing strategies. We also create an immutable blockchain audit trail for regulated industries like medical devices. Built this weekend with CrewAI, FastAPI, and Next.js."
 
-## Contact
+## Team
 
-- Jacob Valdez - jacob@precisionbom.com
-- WeChat: jvboid
-- WhatsApp: +1.469.968.9490
+- **Ojas Patkar**
+- **Jacob Valdez** - jacob@precisionbom.com | +1.469.968.9490 | WeChat: jvboid
+- **Mark Lubin**
+- **Kyle Smith**
