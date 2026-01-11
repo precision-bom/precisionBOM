@@ -33,4 +33,4 @@ drizzle/
 # TypeScript
 *.tsbuildinfo
 .managed_wallet.json
-!.env
+.env
