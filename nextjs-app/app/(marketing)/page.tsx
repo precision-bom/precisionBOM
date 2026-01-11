@@ -270,7 +270,6 @@ export default function LandingPage() {
 
             {/* CTA Buttons - Brutalist style */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-              <InlineEmailCapture />
               <Link
                 href="/register"
                 className="group inline-flex items-center justify-center px-8 py-4 text-sm font-bold bg-white text-black border-4 border-white hover:bg-black hover:text-white transition-colors duration-200 font-mono uppercase tracking-wider"
