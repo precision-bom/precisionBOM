@@ -16,7 +16,6 @@
     "ethers": "^6.16.0",
     "@sendgrid/mail": "^8.1.6",
     "@neondatabase/serverless": "^0.10.0",
-    "ascii-art": "^2.8.5",
     "bcryptjs": "^3.0.3",
     "drizzle-orm": "^0.45.1",
     "jose": "^6.1.3",
