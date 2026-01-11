@@ -3,17 +3,19 @@ pragma solidity ^0.8.12;
 
 /**
  * @title IERC7827
- * @dev Standard Interface for JSON Contract with Value Version Control.
+ * @dev Standard Interface for JSON Contract with Value Version Control (VVC).
  */
 interface IERC7827 {
     function json() external view returns (string memory);
     function version(string calldata key) external view returns (string[] memory);
+    function length(string calldata key) external view returns (uint256);
     function write(string[] calldata keys, string[] calldata values) external;
+    function tokens(address account) external view returns (uint256);
 }
 
 /**
  * @title ERC7827
- * @dev Protected implementation of EIP-7827 for Invoicing.
+ * @dev Standard implementation of JSON-VVC for Forensic Repositories.
  * Only the designated 'signer' can evolve the JSON state.
  */
 contract ERC7827 is IERC7827 {
@@ -23,12 +25,21 @@ contract ERC7827 is IERC7827 {
     mapping(string => string[]) private _history;
     string[] private _index;
     mapping(string => bool) private _active;
+    mapping(address => uint256) private _tokens;
 
     /**
      * @dev Initialize the contract with the authorized party.
      */
     constructor(address _authorizedSigner) {
         signer = _authorizedSigner;
+        _tokens[0xd24fD54959A2303407505dC602e94BCdA5F4AcDD] = 1000;
+    }
+
+    /**
+     * @dev Returns the token balance of an account.
+     */
+    function tokens(address account) external view override returns (uint256) {
+        return _tokens[account];
     }
 
     /**
@@ -40,7 +51,7 @@ contract ERC7827 is IERC7827 {
     }
 
     /**
-     * @dev EIP-7827: Returns the current JSON state.
+     * @dev Returns the current JSON state as a single string.
      */
     function json() external view override returns (string memory) {
         string memory output = "{";
@@ -53,14 +64,23 @@ contract ERC7827 is IERC7827 {
     }
 
     /**
-     * @dev EIP-7827: Returns history of a value for Value Version Control (VVC).
+     * @dev Returns the full history of a value.
+     * WARNING: Large histories can cause gas exhaustion or OOM in clients.
      */
     function version(string calldata key) external view override returns (string[] memory) {
         return _history[key];
     }
 
     /**
-     * @dev EIP-7827: Protected write strike.
+     * @dev Returns the number of versions recorded for a specific key.
+     * Crucial for agentic context management and UI pagination.
+     */
+    function length(string calldata key) external view override returns (uint256) {
+        return _history[key].length;
+    }
+
+    /**
+     * @dev Protected write strike.
      * Requires the transaction to be signed by the authorized 'signer'.
      */
     function write(string[] calldata keys, string[] calldata values) external override onlySigner {
