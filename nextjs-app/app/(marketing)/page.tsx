@@ -141,6 +141,72 @@ function ASCIIStat({ value, label, delay = 0 }: { value: string; label: string; 
   );
 }
 
+// Inline email capture for hero section
+function InlineEmailCapture() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setStatus("loading");
+
+    try {
+      const response = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, source: "hero" }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setStatus("success");
+        setEmail("");
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  };
+
+  if (status === "success") {
+    return (
+      <div className="flex items-center gap-2 px-4 py-3 border-2 border-green-500 bg-black">
+        <span className="text-green-500 font-mono text-sm">[✓]</span>
+        <span className="text-white font-mono text-sm">You&apos;re on the list!</span>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="flex">
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => {
+          setEmail(e.target.value);
+          if (status === "error") setStatus("idle");
+        }}
+        placeholder="your@email.com"
+        className={`w-48 sm:w-56 px-4 py-4 bg-black border-4 border-r-0 text-white font-mono text-sm placeholder:text-neutral-600 focus:outline-none transition-colors ${
+          status === "error" ? "border-red-500" : "border-white focus:border-green-500"
+        }`}
+        disabled={status === "loading"}
+      />
+      <button
+        type="submit"
+        disabled={status === "loading" || !email}
+        className="px-4 py-4 bg-green-500 text-black font-mono text-sm font-bold uppercase tracking-wider border-4 border-green-500 hover:bg-black hover:text-green-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {status === "loading" ? "..." : "→"}
+      </button>
+    </form>
+  );
+}
+
 // ASCII separator line with animation
 function ASCIISeparator({ className = "" }: { className?: string }) {
   return (
@@ -203,7 +269,8 @@ export default function LandingPage() {
             </p>
 
             {/* CTA Buttons - Brutalist style */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+              <InlineEmailCapture />
               <Link
                 href="/register"
                 className="group inline-flex items-center justify-center px-8 py-4 text-sm font-bold bg-white text-black border-4 border-white hover:bg-black hover:text-white transition-colors duration-200 font-mono uppercase tracking-wider"
