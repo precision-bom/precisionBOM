@@ -26,6 +26,10 @@ yarn-error.log*
 # Vercel
 .vercel
 
+# Database
+data/
+drizzle/
+
 # TypeScript
 *.tsbuildinfo
 .managed_wallet.json

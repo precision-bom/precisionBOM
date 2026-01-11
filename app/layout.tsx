@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "BOM Sourcing App",
-  description: "Upload and source your Bill of Materials",
+  title: "PrecisionBOM - AI-Powered BOM Sourcing",
+  description:
+    "Precision sourcing with DigiKey. AI-powered BOM optimization for accurate, reliable component sourcing.",
 };
 
 export default function RootLayout({
@@ -12,8 +13,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="bg-gray-50 min-h-screen">{children}</body>
+    <html lang="en" className="dark">
+      <body className="bg-substrate-950 text-silkscreen min-h-screen antialiased">
+        {children}
+      </body>
     </html>
   );
 }

@@ -1,0 +1,77 @@
+# NeuroLink Mini - Portable BCI Signal Acquisition Unit
+# Project Intake Sheet for BOM Agent Processing
+
+project:
+  name: "NeuroLink Mini v1.0"
+  id: "NL-2025-001"
+  owner: "sarah.chen@neurolink.bio"
+  engineering_contact: "david.park@neurolink.bio"
+
+requirements:
+  product_type: "medical"
+  quantity: 50
+  deadline: "2025-04-15"
+  budget_total: 15000.00
+
+compliance:
+  standards:
+    - "RoHS"
+    - "IEC 60601-1"
+    - "ISO 13485"
+    - "FDA Class II"
+  quality_class: "IPC Class 3"
+  country_of_origin_restrictions:
+    - "none"
+
+sourcing_constraints:
+  allow_brokers: false
+  allow_alternates: true
+  single_source_ok: false
+  preferred_distributors:
+    - "digikey"
+    - "mouser"
+    - "newark"
+  max_lead_time_days: 21
+
+engineering_context:
+  notes: |
+    CRITICAL DESIGN REQUIREMENTS:
+    - This is a medical-grade neural signal acquisition device
+    - Requires ultra-low noise power supplies for analog front-end
+    - Must use medical-grade connectors for patient contact
+    - ESD protection mandatory on all patient-facing interfaces
+    - Prefer automotive/medical grade passives where available
+    - ADS1299 is the heart of the system - no substitutes allowed
+    - STM32H7 selected for DSP capabilities - must have 2MB+ flash
+    - All analog components should be precision grade (0.1% or better for critical paths)
+    - USB isolation required for patient safety (IEC 60601-1 compliance)
+
+  critical_parts:
+    - "U1"    # ADS1299 - Neural ADC, no substitutes
+    - "U2"    # STM32H7 - Main processor
+    - "U3"    # Analog LDO - critical for noise
+    - "U5"    # Instrumentation amp - signal integrity
+    - "U6"    # Digital isolator - patient safety
+    - "J2"    # Medical connector - patient interface
+
+  preferred_manufacturers:
+    capacitors:
+      - "Murata"
+      - "TDK"
+      - "KEMET"
+    resistors:
+      - "Panasonic"
+      - "Vishay"
+      - "Yageo"
+    mcu:
+      - "STMicroelectronics"
+    connectors:
+      - "Harwin"
+      - "Amphenol"
+      - "Hirose"
+
+  avoid_parts:
+    - mpn: "ADS1298"
+      reason: "Only 8 channels, need ADS1299 for full 8-ch differential"
+    - mpn: "STM32F4"
+      reason: "Insufficient processing power for real-time DSP"

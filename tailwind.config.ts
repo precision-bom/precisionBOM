@@ -7,7 +7,104 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        // Industrial PCB color palette - white on black with green accent
+        trace: {
+          50: "#f0fdf4",
+          100: "#dcfce7",
+          200: "#a7f3d0",
+          300: "#6ee7b7",
+          400: "#34d399",
+          500: "#10b981", // Primary - muted industrial green
+          600: "#059669",
+          700: "#047857",
+          800: "#065f46",
+          900: "#064e3b",
+          950: "#022c22",
+        },
+        copper: {
+          50: "#fefce8",
+          100: "#fef9c3",
+          200: "#fef08a",
+          300: "#fde047",
+          400: "#facc15", // Accent yellow - use sparingly
+          500: "#eab308",
+          600: "#ca8a04",
+          700: "#a16207",
+          800: "#854d0e",
+          900: "#713f12",
+          950: "#422006",
+        },
+        substrate: {
+          50: "#fafafa",
+          100: "#f4f4f5",
+          200: "#e4e4e7",
+          300: "#d4d4d8",
+          400: "#a1a1aa",
+          500: "#71717a",
+          600: "#52525b",
+          700: "#3f3f46",
+          800: "#27272a",
+          900: "#18181b",
+          950: "#09090b",
+        },
+        silkscreen: "#ffffff",
+        solder: "#a1a1aa",
+      },
+      fontFamily: {
+        mono: [
+          "SF Mono",
+          "Monaco",
+          "Cascadia Code",
+          "Roboto Mono",
+          "Fira Code",
+          "monospace",
+        ],
+        sans: [
+          "Inter",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "Roboto",
+          "sans-serif",
+        ],
+      },
+      backgroundImage: {
+        "grid-pattern":
+          "linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px)",
+        "dark-gradient":
+          "radial-gradient(ellipse at top, #18181b 0%, #09090b 100%)",
+      },
+      backgroundSize: {
+        grid: "32px 32px",
+      },
+      boxShadow: {
+        trace: "0 0 20px rgba(16, 185, 129, 0.1)",
+        "trace-lg": "0 0 40px rgba(16, 185, 129, 0.15)",
+        glow: "0 0 30px rgba(255, 255, 255, 0.05)",
+      },
+      animation: {
+        "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "trace-flow": "traceFlow 2s ease-in-out infinite",
+        "trace-pulse": "tracePulse 4s linear infinite",
+        "fade-in-up": "fadeInUp 0.5s ease-out forwards",
+      },
+      keyframes: {
+        traceFlow: {
+          "0%, 100%": { opacity: "0.5" },
+          "50%": { opacity: "1" },
+        },
+        tracePulse: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(400%)" },
+        },
+        fadeInUp: {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+      },
+    },
   },
   plugins: [],
 };

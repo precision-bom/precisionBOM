@@ -1,0 +1,55 @@
+# Project Intake Sheet
+# This file provides context for the BOM processing agents
+
+project:
+  name: "IoT Sensor Board v1"
+  id: "PRJ-2025-001"
+  owner: "jdoe@company.com"
+  engineering_contact: "jsmith@company.com"
+
+requirements:
+  product_type: "consumer"         # consumer | industrial | medical | automotive | aerospace
+  quantity: 100                    # Units to build
+  deadline: "2025-03-01"
+  budget_total: 5000.00
+
+compliance:
+  standards:
+    - "RoHS"
+    - "CE"
+  quality_class: "IPC Class 2"
+  country_of_origin_restrictions: []
+
+sourcing_constraints:
+  allow_brokers: false
+  allow_alternates: true
+  single_source_ok: false
+  preferred_distributors:
+    - "digikey"
+    - "mouser"
+  max_lead_time_days: 30
+
+engineering_context:
+  notes: |
+    - Design is temperature sensitive, prefer automotive-grade passives
+    - MCU must support 1MB+ flash for OTA updates
+    - Avoid parts with known counterfeit issues
+
+  critical_parts:
+    - "U1"
+    - "U2"
+
+  preferred_manufacturers:
+    capacitors:
+      - "Murata"
+      - "Samsung"
+      - "TDK"
+    resistors:
+      - "Yageo"
+      - "Vishay"
+    mcu:
+      - "STMicroelectronics"
+      - "Microchip"
+    connectors:
+      - "Molex"
+      - "TE Connectivity"
