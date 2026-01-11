@@ -3,14 +3,14 @@
 
 project:
   name: "IoT Sensor Board v1"
-  id: "PRJ-2025-001"
+  id: "PRJ-2026-001"
   owner: "jdoe@company.com"
   engineering_contact: "jsmith@company.com"
 
 requirements:
   product_type: "consumer"         # consumer | industrial | medical | automotive | aerospace
   quantity: 100                    # Units to build
-  deadline: "2025-03-01"
+  deadline: "2026-03-01"
   budget_total: 5000.00
 
 compliance:

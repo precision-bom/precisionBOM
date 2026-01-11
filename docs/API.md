@@ -276,7 +276,7 @@ POST /gatekeeper
 {
   "action": "write",
   "keys": ["decision_001", "timestamp"],
-  "values": ["{\"part\":\"LM7805\"}", "2025-01-11T12:00:00Z"]
+  "values": ["{\"part\":\"LM7805\"}", "2026-01-11T12:00:00Z"]
 }
 ```
 

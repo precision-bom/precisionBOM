@@ -1,6 +1,6 @@
 # Journal: Interactive Demo Script for NeuroLink Mini
 
-**Date**: 2025-01-10
+**Date**: 2026-01-10
 **Session**: Afternoon
 
 ## Summary

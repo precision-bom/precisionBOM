@@ -1,6 +1,6 @@
 # Journal: Watch Mode, Knowledge Logging & Demo Data Seeding
 
-**Date**: 2025-01-11
+**Date**: 2026-01-11
 **Session**: Evening
 
 ## Summary
@@ -98,7 +98,7 @@ Added real-time watch mode with spinner for CLI, implemented logging for knowled
 uv run sourcing process sample_bom.csv --intake project_intake.yaml --watch
 
 # Watch existing project
-uv run sourcing watch PRJ-2025-001
+uv run sourcing watch PRJ-2026-001
 
 # Seed demo data
 uv run sourcing kb seed

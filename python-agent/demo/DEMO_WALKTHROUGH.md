@@ -150,12 +150,12 @@ After processing completes, view the project:
 uv run sourcing status
 ```
 
-This lists all projects. Note the project ID (e.g., `NL-2025-001` or `PRJ-xxx`).
+This lists all projects. Note the project ID (e.g., `NL-2026-001` or `PRJ-xxx`).
 
 Get detailed status for the project:
 
 ```bash
-uv run sourcing status NL-2025-001
+uv run sourcing status NL-2026-001
 ```
 
 Or use the actual project ID shown.
@@ -167,7 +167,7 @@ Or use the actual project ID shown.
 See the full agent reasoning chain:
 
 ```bash
-uv run sourcing trace NL-2025-001
+uv run sourcing trace NL-2026-001
 ```
 
 This shows each decision with:
@@ -194,12 +194,12 @@ curl -s http://localhost:8000/projects | python3 -m json.tool
 
 **Get project details:**
 ```bash
-curl -s http://localhost:8000/projects/NL-2025-001 | python3 -m json.tool
+curl -s http://localhost:8000/projects/NL-2026-001 | python3 -m json.tool
 ```
 
 **Get trace via API:**
 ```bash
-curl -s http://localhost:8000/projects/NL-2025-001/trace | python3 -m json.tool
+curl -s http://localhost:8000/projects/NL-2026-001/trace | python3 -m json.tool
 ```
 
 ---

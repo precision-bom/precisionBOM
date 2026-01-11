@@ -126,7 +126,7 @@ interface PartAlternative {
 
 ```json
 {
-  "bom_id": "BOM-2025-001",
+  "bom_id": "BOM-2026-001",
   "decision_type": "part_substitution",
   "original_part": "LM7805CT",
   "selected_part": "L7805CV",
@@ -135,7 +135,7 @@ interface PartAlternative {
   "total_cost": "45.00",
   "supplier": "DigiKey",
   "approved_by": "user@company.com",
-  "timestamp": "2025-01-11T12:00:00Z",
+  "timestamp": "2026-01-11T12:00:00Z",
   "reason": "Better availability, same specs"
 }
 ```

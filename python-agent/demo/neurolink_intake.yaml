@@ -3,14 +3,14 @@
 
 project:
   name: "NeuroLink Mini v1.0"
-  id: "NL-2025-001"
+  id: "NL-2026-001"
   owner: "sarah.chen@neurolink.bio"
   engineering_contact: "david.park@neurolink.bio"
 
 requirements:
   product_type: "medical"
   quantity: 50
-  deadline: "2025-04-15"
+  deadline: "2026-04-15"
   budget_total: 15000.00
 
 compliance:

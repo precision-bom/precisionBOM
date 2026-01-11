@@ -79,7 +79,7 @@ def sample_intake_yaml() -> bytes:
 requirements:
   product_type: "consumer"
   quantity: 100
-  deadline: "2025-06-01"
+  deadline: "2026-06-01"
   budget_total: 5000.00
 
 compliance:

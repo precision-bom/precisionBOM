@@ -166,7 +166,7 @@ project:
 requirements:
   product_type: "consumer"  # consumer | industrial | medical | automotive
   quantity: 100
-  deadline: "2025-03-01"
+  deadline: "2026-03-01"
   budget_total: 5000.00
 
 compliance:

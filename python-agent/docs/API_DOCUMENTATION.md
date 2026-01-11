@@ -198,8 +198,8 @@ GET /projects?limit=100
     "project_name": "Smart Thermostat v2",
     "status": "completed",
     "line_item_count": 45,
-    "created_at": "2025-01-10T10:30:00Z",
-    "updated_at": "2025-01-10T11:45:00Z"
+    "created_at": "2026-01-10T10:30:00Z",
+    "updated_at": "2026-01-10T11:45:00Z"
   }
 ]
 ```
@@ -225,7 +225,7 @@ GET /projects/{project_id}
     "owner": "engineering@example.com",
     "product_type": "consumer",
     "quantity": 1000,
-    "deadline": "2025-03-15",
+    "deadline": "2026-03-15",
     "budget_total": 50000.00,
     "compliance": {
       "standards": ["RoHS", "CE"],
@@ -260,14 +260,14 @@ Returns the execution trace showing each step of the agent workflow.
       "step": "intake",
       "agent": "system",
       "message": "Parsed 45 line items from BOM",
-      "timestamp": "2025-01-10T10:30:00Z"
+      "timestamp": "2026-01-10T10:30:00Z"
     },
     {
       "step": "engineering_review",
       "agent": "Engineering Agent",
       "message": "Reviewed 45 parts: 42 approved, 3 rejected",
       "reasoning": "...",
-      "timestamp": "2025-01-10T10:32:00Z"
+      "timestamp": "2026-01-10T10:32:00Z"
     }
   ]
 }

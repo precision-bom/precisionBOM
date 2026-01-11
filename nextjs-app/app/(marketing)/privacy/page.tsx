@@ -26,7 +26,7 @@ export default function PrivacyPage() {
 {`┌─────────────────────────────────────────────────────────────┐
 │ DOCUMENT: PRIVACY_POLICY.md                                 │
 │ VERSION: 1.0.0                                              │
-│ LAST_MODIFIED: 2025-01-10                                   │
+│ LAST_MODIFIED: 2026-01-10                                   │
 └─────────────────────────────────────────────────────────────┘`}
           </pre>
           <h1 className="text-5xl md:text-6xl font-black uppercase tracking-tight mb-4">

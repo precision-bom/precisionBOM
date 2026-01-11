@@ -542,7 +542,7 @@ export default function LandingPage() {
           <span className="text-green-500">═══════════════════════════════</span>
           <span className="text-green-400">═══════════════════════════════</span>
           {"\n"}
-          <span className="text-neutral-500">PRECISIONBOM © 2024</span>
+          <span className="text-neutral-500">PRECISIONBOM © 2026</span>
           {"\n"}
           <span className="text-neutral-600">PRECISION SOURCING FOR PRECISION ENGINEERING</span>
           {"\n"}

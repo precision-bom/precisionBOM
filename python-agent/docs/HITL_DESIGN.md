@@ -593,7 +593,7 @@ uv run sourcing approvals interactive --project PRJ-001
 ```
 ╭─ Approval Request ─────────────────────────────────────────────────╮
 │ Request: APR-12345678                                              │
-│ Project: PRJ-2025-001                                              │
+│ Project: PRJ-2026-001                                              │
 │ Line Item: R1                                                      │
 │ Checkpoint: post_engineering                                       │
 │ Agent: EngineeringAgent                                            │

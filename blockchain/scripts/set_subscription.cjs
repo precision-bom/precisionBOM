@@ -5,7 +5,7 @@ async function main() {
   const [deployer] = await ethers.getSigners();
   
   // Set the date from command line or default to today - 1 (expired)
-  const newDate = process.argv[2] || "2025-01-01";
+  const newDate = process.argv[2] || "2026-01-01";
   const testAddress = deployer.address.toLowerCase();
 
   console.log(`--- 🖋️ ERC-7827 Write Strike: ${testAddress} ---`);
