@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 interface User {
@@ -39,8 +40,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-substrate-950 flex items-center justify-center">
-        <div className="flex items-center gap-3 text-substrate-400">
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="flex items-center gap-3 text-neutral-400">
           <svg
             className="animate-spin h-5 w-5"
             fill="none"
@@ -71,73 +72,38 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-substrate-950 bg-dark-gradient">
-      {/* Grid overlay */}
-      <div className="fixed inset-0 bg-grid-pattern bg-grid pointer-events-none opacity-50" />
-
-      {/* Header */}
-      <header className="relative border-b border-substrate-800">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-black text-white font-sans">
+      {/* Navigation - Brutalist (matching marketing header) */}
+      <nav className="sticky top-0 z-50 border-b-4 border-white bg-black">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/app" className="flex items-center gap-3 group">
-              <div className="relative">
-                <svg
-                  width="32"
-                  height="32"
-                  viewBox="0 0 32 32"
-                  fill="none"
-                  className="text-trace-500"
-                >
-                  <rect
-                    x="2"
-                    y="2"
-                    width="28"
-                    height="28"
-                    rx="4"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    fill="none"
-                  />
-                  <circle cx="8" cy="8" r="2" fill="currentColor" />
-                  <circle cx="24" cy="8" r="2" fill="currentColor" />
-                  <circle cx="8" cy="24" r="2" fill="currentColor" />
-                  <circle cx="24" cy="24" r="2" fill="currentColor" />
-                  <path
-                    d="M8 8 L16 16 L24 8"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    fill="none"
-                  />
-                  <path
-                    d="M8 24 L16 16 L24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    fill="none"
-                  />
-                </svg>
-              </div>
-              <span className="font-mono font-semibold text-lg">
-                <span className="text-trace-500">Precision</span>
-                <span className="text-copper-400">BOM</span>
-              </span>
+            <Link href="/app" className="flex items-center group">
+              <Image
+                src="/precision-bom-logo.svg"
+                alt="PrecisionBOM"
+                width={180}
+                height={36}
+                className="h-9 w-auto"
+                priority
+              />
             </Link>
 
             {/* User menu */}
             <div className="flex items-center gap-4">
-              <span className="text-sm text-substrate-400 font-mono">
+              <span className="font-mono text-sm text-neutral-400">
                 {user.email}
               </span>
               <button
                 onClick={handleLogout}
-                className="px-3 py-1.5 text-sm font-mono text-substrate-400 hover:text-silkscreen hover:bg-substrate-800 rounded-md transition-colors"
+                className="font-mono text-sm px-4 py-2 text-neutral-400 hover:text-green-500 transition-colors uppercase tracking-wider"
               >
-                Logout
+                LOGOUT
               </button>
             </div>
           </div>
         </div>
-      </header>
+      </nav>
 
       {/* Main content */}
       <main className="relative">{children}</main>
