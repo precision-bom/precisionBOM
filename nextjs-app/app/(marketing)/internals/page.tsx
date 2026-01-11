@@ -747,12 +747,8 @@ WHY BLOCKCHAIN?
 │                                     │
 └─────────────────────────────────────┘`}
               </pre>
-              <p className="font-sans text-sm text-neutral-500 line-through">
-                Rilo turned our lead acquisition from manual outreach to automated
-                workflows. Describe what you want in plain English, get signups.
-              </p>
-              <p className="font-sans text-xs text-neutral-400 italic mt-2">
-                Note: Founder was unavailable
+              <p className="font-sans text-sm text-neutral-500">
+                We used Rilo to generate LinkedIn and Reddit content for PrecisionBOM.
               </p>
             </div>
 
