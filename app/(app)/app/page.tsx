@@ -5,8 +5,9 @@ import FileUpload from "@/components/FileUpload";
 import BomSuggestions from "@/components/BomSuggestions";
 import { BomSuggestionResult } from "@/types/bom";
 
-export default function Home() {
-  const [suggestionResult, setSuggestionResult] = useState<BomSuggestionResult | null>(null);
+export default function AppDashboard() {
+  const [suggestionResult, setSuggestionResult] =
+    useState<BomSuggestionResult | null>(null);
 
   const handleSuggestionsReady = (result: BomSuggestionResult) => {
     setSuggestionResult(result);
@@ -17,20 +18,20 @@ export default function Home() {
   };
 
   return (
-    <main className="container mx-auto px-4 py-8 max-w-5xl">
+    <div className="container mx-auto px-4 py-8 max-w-5xl">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            BOM Sourcing Tool
+          <h1 className="text-2xl font-mono font-semibold text-silkscreen">
+            BOM Sourcing
           </h1>
-          <p className="text-gray-500 mt-1">
-            Upload a BOM and get concrete sourcing suggestions
+          <p className="text-substrate-400 mt-1 text-sm">
+            Upload a BOM and get AI-powered sourcing suggestions
           </p>
         </div>
         {suggestionResult && (
           <button
             onClick={handleReset}
-            className="px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+            className="px-4 py-2 text-sm font-mono text-substrate-400 hover:text-silkscreen hover:bg-substrate-800 rounded-lg transition-colors border border-substrate-700"
           >
             Start Over
           </button>
@@ -44,6 +45,6 @@ export default function Home() {
       ) : (
         <BomSuggestions result={suggestionResult} />
       )}
-    </main>
+    </div>
   );
 }
