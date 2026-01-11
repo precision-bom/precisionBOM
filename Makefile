@@ -1,4 +1,4 @@
-.PHONY: dev dev-web dev-api install clean clean-web clean-api clean-blockchain db-push db-studio build test help
+.PHONY: dev dev-web dev-api install clean clean-web clean-api clean-blockchain db-push db-studio db-generate db-migrate build test help
 
 # Default target
 help:
@@ -12,7 +12,9 @@ help:
 	@echo "  make build        Build all services"
 	@echo "  make test         Run all tests"
 	@echo ""
-	@echo "  make db-push      Push schema to Neon database"
+	@echo "  make db-generate  Generate SQL migration files"
+	@echo "  make db-migrate   Run pending migrations"
+	@echo "  make db-push      Push schema directly (no migrations)"
 	@echo "  make db-studio    Open Drizzle Studio"
 	@echo ""
 	@echo "  make clean        Clean all build artifacts"
@@ -56,6 +58,9 @@ db-studio:
 db-generate:
 	cd nextjs-app && npm run db:generate
 
+db-migrate:
+	cd nextjs-app && npm run db:migrate
+
 # Build
 build: build-web build-blockchain
 
@@ -81,7 +86,6 @@ clean: clean-web clean-api clean-blockchain
 clean-web:
 	rm -rf nextjs-app/.next
 	rm -rf nextjs-app/node_modules
-	rm -rf nextjs-app/drizzle
 
 clean-api:
 	rm -rf python-agent/.venv
