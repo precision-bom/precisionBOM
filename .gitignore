@@ -34,6 +34,9 @@ drizzle/
 *.tsbuildinfo
 .managed_wallet.json
 .env
+.env.local
+.env.production
+.env.production.local
 next-env.d.ts
 
 # Python
