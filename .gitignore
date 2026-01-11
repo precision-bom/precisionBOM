@@ -39,6 +39,11 @@ drizzle/
 .env.production.local
 next-env.d.ts
 
+# Hardhat
+artifacts/
+cache/
+typechain-types/
+
 # Python
 __pycache__/
 *.py[cod]
