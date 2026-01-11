@@ -1,0 +1,4 @@
+Line,MPN,Manufacturer,Description,Quantity,Package,Reference Designators
+1,STM32H743ZIT6,STMicroelectronics,ARM Cortex-M7 480MHz MCU 2MB Flash,50,LQFP-144,U1
+2,GRM188R71H104KA93D,Murata,100nF 50V X7R 0603,500,0603,C1-C10
+3,RC0603FR-0710KL,Yageo,10K Ohm 1% 0.1W 0603,200,0603,R1-R4

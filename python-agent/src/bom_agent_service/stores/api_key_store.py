@@ -35,6 +35,7 @@ class ApiKeyStore:
                 CREATE TABLE IF NOT EXISTS api_keys (
                     key_id TEXT PRIMARY KEY,
                     hashed_key TEXT NOT NULL UNIQUE,
+                    client_id TEXT,
                     name TEXT NOT NULL,
                     scopes TEXT NOT NULL,
                     created_at TEXT NOT NULL,
@@ -42,11 +43,21 @@ class ApiKeyStore:
                     is_active INTEGER DEFAULT 1
                 )
             """)
+            # Add client_id column if it doesn't exist (migration)
+            try:
+                conn.execute("ALTER TABLE api_keys ADD COLUMN client_id TEXT")
+            except sqlite3.OperationalError:
+                pass  # Column already exists
             conn.commit()
 
-    def create_key(self, name: str, scopes: list[str] | None = None) -> tuple[ApiKey, str]:
+    def create_key(self, name: str, scopes: list[str] | None = None, client_id: str | None = None) -> tuple[ApiKey, str]:
         """
         Create a new API key.
+
+        Args:
+            name: Human-readable name for the key
+            scopes: List of permission scopes (defaults to ["all"])
+            client_id: Optional client ID this key belongs to
 
         Returns:
             Tuple of (ApiKey model, raw key string).
@@ -62,17 +73,19 @@ class ApiKeyStore:
             hashed_key=hashed_key,
             name=name,
             scopes=scopes,
+            client_id=client_id,
         )
 
         with sqlite3.connect(self.db_path) as conn:
             conn.execute(
                 """
-                INSERT INTO api_keys (key_id, hashed_key, name, scopes, created_at, is_active)
-                VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO api_keys (key_id, hashed_key, client_id, name, scopes, created_at, is_active)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     api_key.key_id,
                     api_key.hashed_key,
+                    api_key.client_id,
                     api_key.name,
                     ",".join(api_key.scopes),
                     api_key.created_at.isoformat(),
@@ -95,7 +108,7 @@ class ApiKeyStore:
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.execute(
                 """
-                SELECT key_id, hashed_key, name, scopes, created_at, last_used, is_active
+                SELECT key_id, hashed_key, client_id, name, scopes, created_at, last_used, is_active
                 FROM api_keys
                 WHERE hashed_key = ? AND is_active = 1
                 """,
@@ -117,11 +130,12 @@ class ApiKeyStore:
             return ApiKey(
                 key_id=row[0],
                 hashed_key=row[1],
-                name=row[2],
-                scopes=row[3].split(",") if row[3] else ["all"],
-                created_at=datetime.fromisoformat(row[4]),
+                client_id=row[2],
+                name=row[3],
+                scopes=row[4].split(",") if row[4] else ["all"],
+                created_at=datetime.fromisoformat(row[5]),
                 last_used=now,
-                is_active=bool(row[6]),
+                is_active=bool(row[7]),
             )
 
     def revoke_key(self, key_id: str) -> bool:
@@ -138,20 +152,31 @@ class ApiKeyStore:
             conn.commit()
             return cursor.rowcount > 0
 
-    def list_keys(self) -> list[ApiKey]:
+    def list_keys(self, client_id: str | None = None) -> list[ApiKey]:
         """
-        List all API keys.
+        List API keys, optionally filtered by client_id.
 
         Note: Returns ApiKey objects with hashed_key field (not the raw key).
         """
         with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.execute(
-                """
-                SELECT key_id, hashed_key, name, scopes, created_at, last_used, is_active
-                FROM api_keys
-                ORDER BY created_at DESC
-                """
-            )
+            if client_id:
+                cursor = conn.execute(
+                    """
+                    SELECT key_id, hashed_key, client_id, name, scopes, created_at, last_used, is_active
+                    FROM api_keys
+                    WHERE client_id = ?
+                    ORDER BY created_at DESC
+                    """,
+                    (client_id,),
+                )
+            else:
+                cursor = conn.execute(
+                    """
+                    SELECT key_id, hashed_key, client_id, name, scopes, created_at, last_used, is_active
+                    FROM api_keys
+                    ORDER BY created_at DESC
+                    """
+                )
 
             keys = []
             for row in cursor.fetchall():
@@ -159,11 +184,12 @@ class ApiKeyStore:
                     ApiKey(
                         key_id=row[0],
                         hashed_key=row[1],
-                        name=row[2],
-                        scopes=row[3].split(",") if row[3] else ["all"],
-                        created_at=datetime.fromisoformat(row[4]),
-                        last_used=datetime.fromisoformat(row[5]) if row[5] else None,
-                        is_active=bool(row[6]),
+                        client_id=row[2],
+                        name=row[3],
+                        scopes=row[4].split(",") if row[4] else ["all"],
+                        created_at=datetime.fromisoformat(row[5]),
+                        last_used=datetime.fromisoformat(row[6]) if row[6] else None,
+                        is_active=bool(row[7]),
                     )
                 )
             return keys
@@ -173,7 +199,7 @@ class ApiKeyStore:
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.execute(
                 """
-                SELECT key_id, hashed_key, name, scopes, created_at, last_used, is_active
+                SELECT key_id, hashed_key, client_id, name, scopes, created_at, last_used, is_active
                 FROM api_keys
                 WHERE key_id = ?
                 """,
@@ -187,9 +213,10 @@ class ApiKeyStore:
             return ApiKey(
                 key_id=row[0],
                 hashed_key=row[1],
-                name=row[2],
-                scopes=row[3].split(",") if row[3] else ["all"],
-                created_at=datetime.fromisoformat(row[4]),
-                last_used=datetime.fromisoformat(row[5]) if row[5] else None,
-                is_active=bool(row[6]),
+                client_id=row[2],
+                name=row[3],
+                scopes=row[4].split(",") if row[4] else ["all"],
+                created_at=datetime.fromisoformat(row[5]),
+                last_used=datetime.fromisoformat(row[6]) if row[6] else None,
+                is_active=bool(row[7]),
             )

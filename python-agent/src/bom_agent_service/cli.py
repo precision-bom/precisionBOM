@@ -40,16 +40,20 @@ STEP_ICONS = {
 }
 
 
+DEFAULT_ADMIN_KEY = os.environ.get("ADMIN_API_KEY", "")
+
+
 class APIClient:
     """HTTP client for BOM Agent Service API."""
 
-    def __init__(self, base_url: str = DEFAULT_API_URL, api_key: str = None):
+    def __init__(self, base_url: str = DEFAULT_API_URL, api_key: str = None, admin_key: str = None):
         self.base_url = base_url.rstrip("/")
         self.api_key = api_key or DEFAULT_API_KEY
+        self.admin_key = admin_key or DEFAULT_ADMIN_KEY
         headers = {}
         if self.api_key:
             headers["X-API-Key"] = self.api_key
-        self.client = httpx.Client(timeout=300.0, headers=headers)  # Long timeout for processing
+        self.client = httpx.Client(timeout=300.0, headers=headers, follow_redirects=True)  # Long timeout for processing
 
     def health_check(self) -> bool:
         """Check if API is healthy."""
@@ -156,10 +160,39 @@ class APIClient:
         resp.raise_for_status()
         return resp.json()
 
+    # Admin API
+    def admin_status(self) -> dict:
+        """Get admin API status (no auth required)."""
+        resp = self.client.get(f"{self.base_url}/admin/status")
+        resp.raise_for_status()
+        return resp.json()
 
-def get_client(url: str, api_key: str = None) -> APIClient:
+    def admin_bootstrap(self, client_name: str = "Demo Client", client_slug: str = "demo", key_name: str = "demo-key") -> dict:
+        """Bootstrap a demo client and API key."""
+        headers = {}
+        if self.admin_key:
+            headers["X-Admin-Key"] = self.admin_key
+        resp = self.client.post(
+            f"{self.base_url}/admin/bootstrap",
+            json={"client_name": client_name, "client_slug": client_slug, "key_name": key_name},
+            headers=headers,
+        )
+        resp.raise_for_status()
+        return resp.json()
+
+    def admin_reset_demo(self) -> dict:
+        """Reset demo data."""
+        headers = {}
+        if self.admin_key:
+            headers["X-Admin-Key"] = self.admin_key
+        resp = self.client.post(f"{self.base_url}/admin/reset-demo", headers=headers)
+        resp.raise_for_status()
+        return resp.json()
+
+
+def get_client(url: str, api_key: str = None, admin_key: str = None) -> APIClient:
     """Get API client, checking health first."""
-    client = APIClient(url, api_key=api_key)
+    client = APIClient(url, api_key=api_key, admin_key=admin_key)
     if not client.health_check():
         console.print(f"[red]API not available at {url}[/]")
         console.print("[dim]Start the service with: uv run uvicorn bom_agent_service.main:app --reload[/]")
@@ -1010,6 +1043,105 @@ def apikey_revoke(key_id: str):
         console.print(f"[green]Revoked API key: {key_id} ({existing.name})[/]")
     else:
         console.print(f"[red]Failed to revoke API key: {key_id}[/]")
+
+
+# =============================================================================
+# Admin Commands
+# =============================================================================
+
+@main.group()
+def admin():
+    """Admin API for bootstrapping and demo setup."""
+    pass
+
+
+@admin.command("status")
+@click.pass_context
+def admin_status(ctx):
+    """Check admin API status."""
+    client = get_client(ctx.obj["api_url"], admin_key=ctx.obj.get("admin_key"))
+
+    try:
+        status = client.admin_status()
+    except httpx.HTTPStatusError as e:
+        console.print(f"[red]Error: {e.response.text}[/]")
+        sys.exit(1)
+
+    console.print(Panel.fit(
+        f"[bold]Admin Status[/]\n\n"
+        f"[bold]Admin API Configured:[/] {'[green]Yes[/]' if status['admin_configured'] else '[red]No[/]'}\n"
+        f"[bold]Has Clients:[/] {'Yes' if status['has_clients'] else 'No'}\n"
+        f"[bold]Has API Keys:[/] {'Yes' if status['has_api_keys'] else 'No'}\n"
+        f"[bold]Client Count:[/] {status['client_count']}\n"
+        f"[bold]API Key Count:[/] {status['key_count']}",
+        border_style="cyan",
+    ))
+
+    if not status['admin_configured']:
+        console.print("\n[yellow]Set ADMIN_API_KEY environment variable to enable admin functions.[/]")
+
+
+@admin.command("bootstrap")
+@click.option("--name", "-n", default="Demo Client", help="Client name")
+@click.option("--slug", "-s", default="demo", help="Client slug (unique identifier)")
+@click.option("--key-name", "-k", default="demo-key", help="API key name")
+@click.option("--admin-key", envvar="ADMIN_API_KEY", help="Admin API key (or set ADMIN_API_KEY env var)")
+@click.pass_context
+def admin_bootstrap(ctx, name: str, slug: str, key_name: str, admin_key: str):
+    """Bootstrap a demo client and API key.
+
+    Creates a client and API key for demo/development use.
+    Requires the ADMIN_API_KEY to be set.
+    """
+    if not admin_key:
+        console.print("[red]Admin key required. Set ADMIN_API_KEY or use --admin-key.[/]")
+        sys.exit(1)
+
+    client = APIClient(ctx.obj["api_url"], admin_key=admin_key)
+
+    try:
+        result = client.admin_bootstrap(client_name=name, client_slug=slug, key_name=key_name)
+    except httpx.HTTPStatusError as e:
+        console.print(f"[red]Error: {e.response.text}[/]")
+        sys.exit(1)
+
+    console.print()
+    console.print(Panel.fit(
+        f"[bold green]Bootstrap Complete[/]\n\n"
+        f"[bold]Client ID:[/] {result['client_id']}\n"
+        f"[bold]Client Name:[/] {result['client_name']}\n"
+        f"[bold]Key ID:[/] {result['key_id']}\n"
+        f"[bold]Key Name:[/] {result['key_name']}\n\n"
+        f"[bold yellow]API Key:[/] [bold cyan]{result['api_key']}[/]\n\n"
+        f"[dim italic]{result['message']}[/]\n"
+        f"[dim italic]Save this key - it will not be shown again![/]",
+        border_style="green",
+    ))
+    console.print()
+
+
+@admin.command("reset-demo")
+@click.option("--admin-key", envvar="ADMIN_API_KEY", help="Admin API key")
+@click.confirmation_option(prompt="Are you sure you want to reset demo data?")
+@click.pass_context
+def admin_reset_demo(ctx, admin_key: str):
+    """Reset demo client and revoke its API keys."""
+    if not admin_key:
+        console.print("[red]Admin key required. Set ADMIN_API_KEY or use --admin-key.[/]")
+        sys.exit(1)
+
+    client = APIClient(ctx.obj["api_url"], admin_key=admin_key)
+
+    try:
+        result = client.admin_reset_demo()
+    except httpx.HTTPStatusError as e:
+        console.print(f"[red]Error: {e.response.text}[/]")
+        sys.exit(1)
+
+    if result.get("reset"):
+        console.print(f"[green]{result['message']}[/]")
+    else:
+        console.print(f"[yellow]{result['message']}[/]")
 
 
 if __name__ == "__main__":

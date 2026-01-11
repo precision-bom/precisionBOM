@@ -38,6 +38,7 @@ from .market_intel import (
     MarketIntelItem,
     MarketIntelReport,
 )
+from .client import Client
 
 __all__ = [
     # Enums
@@ -74,4 +75,5 @@ __all__ = [
     "MarketIntelReport",
     # Auth
     "ApiKey",
+    "Client",
 ]

@@ -54,7 +54,7 @@ class SourcingAgent:
             backstory="""You are an experienced supply chain analyst specializing in
             electronics procurement and supplier risk assessment.""",
             llm=self._llm,
-            verbose=False,
+            verbose=True,
             allow_delegation=False,
         )
 
@@ -153,16 +153,35 @@ You MUST provide a decision for every part listed: {', '.join(mpn_list)}""",
         crew = Crew(
             agents=[self.agent],
             tasks=[task],
-            verbose=False,
+            verbose=True,
         )
 
+        # Log full prompt
+        logger.info("=" * 80)
+        logger.info("SOURCING AGENT - LLM REQUEST")
+        logger.info("=" * 80)
+        logger.info(f"PROMPT:\n{task.description}")
+        logger.info("=" * 80)
+
         result = await crew.kickoff_async()
+
+        # Log full response
+        logger.info("=" * 80)
+        logger.info("SOURCING AGENT - LLM RESPONSE")
+        logger.info("=" * 80)
+        logger.info(f"RAW RESPONSE:\n{result.raw}")
+        logger.info("=" * 80)
 
         # Access the structured pydantic output
         if not result.pydantic:
             raise ValueError(f"SourcingAgent: LLM did not return structured output. Raw: {result.raw[:500] if result.raw else 'EMPTY'}")
 
         batch_result: SourcingBatchResult = result.pydantic
+
+        # Debug: log what we got back
+        logger.info(f"SourcingAgent: Got {len(batch_result.decisions)} decisions for {len(mpn_list)} parts")
+        returned_mpns = {d.mpn for d in batch_result.decisions}
+        logger.info(f"SourcingAgent: Returned MPNs: {returned_mpns}")
 
         # Convert to AgentDecision dict
         decisions = {}

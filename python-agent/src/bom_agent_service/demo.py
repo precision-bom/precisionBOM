@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """Demo entry point - runs the NeuroLink Mini BOM Agent demo."""
 
+import os
 import subprocess
 import sys
 import time
 from pathlib import Path
 
+import httpx
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
@@ -20,17 +22,25 @@ DEMO_DIR = PROJECT_ROOT / "demo"
 BOM_FILE = DEMO_DIR / "neurolink_bom.csv"
 INTAKE_FILE = DEMO_DIR / "neurolink_intake.yaml"
 
+# Global API key for demo - set after bootstrap
+DEMO_API_KEY = None
+
 
 def run_cmd(cmd: str, capture: bool = False, show_cmd: bool = True) -> str:
     """Run a CLI command and optionally capture output."""
+    # Add API key to environment if we have one
+    env = os.environ.copy()
+    if DEMO_API_KEY:
+        env["SERVICE_API_KEY"] = DEMO_API_KEY
+
     if show_cmd:
         console.print(f"\n[dark_green]$[/dark_green] [bold]{cmd}[/bold]\n")
 
     if capture:
-        result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, env=env)
         return result.stdout + result.stderr
     else:
-        subprocess.run(cmd, shell=True)
+        subprocess.run(cmd, shell=True, env=env)
         return ""
 
 
@@ -72,12 +82,43 @@ def detail(text: str):
 
 def check_server() -> bool:
     """Check if API server is running."""
-    import httpx
     try:
         resp = httpx.get("http://localhost:8000/health", timeout=2.0)
         return resp.status_code == 200
     except Exception:
         return False
+
+
+def bootstrap_demo() -> str | None:
+    """Bootstrap the demo client and get an API key.
+
+    Returns the API key if successful, None otherwise.
+    """
+    global DEMO_API_KEY
+
+    admin_key = os.environ.get("ADMIN_API_KEY")
+    if not admin_key:
+        console.print("[red]ADMIN_API_KEY environment variable not set![/red]")
+        console.print("[dim]Set it to bootstrap the demo: export ADMIN_API_KEY=your-secret-key[/dim]")
+        return None
+
+    try:
+        resp = httpx.post(
+            "http://localhost:8000/admin/bootstrap",
+            json={"client_name": "Demo Client", "client_slug": "demo", "key_name": "demo-key"},
+            headers={"X-Admin-Key": admin_key},
+            timeout=10.0,
+        )
+        if resp.status_code == 200:
+            data = resp.json()
+            DEMO_API_KEY = data["api_key"]
+            return DEMO_API_KEY
+        else:
+            console.print(f"[red]Bootstrap failed: {resp.text}[/red]")
+            return None
+    except Exception as e:
+        console.print(f"[red]Bootstrap error: {e}[/red]")
+        return None
 
 
 def main():
@@ -105,6 +146,7 @@ def main():
     console.print("[dark_orange]Prerequisites:[/dark_orange]")
     console.print("  • API server running: [bold]uv run sourcing-server[/bold]")
     console.print("  • OPENAI_API_KEY environment variable set")
+    console.print("  • ADMIN_API_KEY environment variable set (for bootstrap)")
     console.print()
 
     # Check server
@@ -114,6 +156,16 @@ def main():
         sys.exit(1)
     else:
         console.print("[dark_green]✓ API server is running[/dark_green]")
+
+    # Bootstrap demo client and get API key
+    console.print("[dim]Bootstrapping demo client...[/dim]")
+    api_key = bootstrap_demo()
+    if not api_key:
+        console.print("[red]❌ Failed to bootstrap demo![/red]")
+        sys.exit(1)
+    else:
+        console.print("[dark_green]✓ Demo client bootstrapped[/dark_green]")
+        console.print(f"[dim]  API Key: {api_key[:20]}...[/dim]")
 
     wait_for_user()
 
@@ -251,9 +303,9 @@ def main():
     run_cmd("uv run sourcing status")
 
     # Get latest project
-    import httpx
     try:
-        resp = httpx.get("http://localhost:8000/projects")
+        headers = {"X-API-Key": DEMO_API_KEY} if DEMO_API_KEY else {}
+        resp = httpx.get("http://localhost:8000/projects", headers=headers)
         projects = resp.json()
         if projects:
             project_id = projects[-1]["project_id"]

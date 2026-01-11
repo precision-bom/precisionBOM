@@ -116,10 +116,25 @@ For EACH part, provide a thorough financial evaluation:
 5. Identify any cost optimization opportunities
 6. Flag budget concerns if line item is expensive relative to budget
 
-Provide detailed reasoning explaining your cost analysis for each part.
+You MUST provide a decision for every part listed: {', '.join(mpn_list)}
 
-You MUST provide a decision for every part listed: {', '.join(mpn_list)}""",
-            expected_output="Structured finance decisions for each part with cost analysis, recommended quantities, and budget impact",
+IMPORTANT: Return your response as a JSON object with this exact structure:
+{{
+  "decisions": [
+    {{
+      "mpn": "PART_NUMBER",
+      "decision": "APPROVED" or "REJECTED",
+      "reasoning": "Detailed cost analysis explanation",
+      "recommended_qty": 100,
+      "estimated_unit_price": 1.50,
+      "estimated_line_cost": 150.00,
+      "budget_impact": "within_budget" or "over_budget"
+    }}
+  ],
+  "total_estimated_spend": 500.00,
+  "budget_utilization_pct": 50.0
+}}""",
+            expected_output="JSON object with decisions array containing finance decisions for each part",
             agent=self.agent,
             output_pydantic=FinanceBatchResult,
         )
@@ -128,10 +143,24 @@ You MUST provide a decision for every part listed: {', '.join(mpn_list)}""",
         crew = Crew(
             agents=[self.agent],
             tasks=[task],
-            verbose=False,
+            verbose=True,
         )
 
+        # Log full prompt
+        logger.info("=" * 80)
+        logger.info("FINANCE AGENT - LLM REQUEST")
+        logger.info("=" * 80)
+        logger.info(f"PROMPT:\n{task.description}")
+        logger.info("=" * 80)
+
         result = await crew.kickoff_async()
+
+        # Log full response
+        logger.info("=" * 80)
+        logger.info("FINANCE AGENT - LLM RESPONSE")
+        logger.info("=" * 80)
+        logger.info(f"RAW RESPONSE:\n{result.raw}")
+        logger.info("=" * 80)
 
         # Access the structured pydantic output
         if not result.pydantic:

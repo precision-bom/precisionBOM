@@ -12,6 +12,7 @@ class ApiKey(BaseModel):
 
     key_id: str = Field(default_factory=lambda: f"key_{uuid.uuid4().hex[:12]}")
     hashed_key: str  # SHA-256 hash of the actual key
+    client_id: Optional[str] = None  # Associated client ID for multi-tenant support
     name: str  # Human-readable name (e.g., "nextjs-service")
     scopes: list[str] = Field(default_factory=lambda: ["all"])
     created_at: datetime = Field(default_factory=datetime.utcnow)

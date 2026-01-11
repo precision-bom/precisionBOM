@@ -123,8 +123,21 @@ For EACH part, evaluate:
 4. Is this a critical part needing extra scrutiny?
 5. Are there approved alternates available?
 
-You MUST provide a decision for every part listed: {', '.join(mpn_list)}""",
-            expected_output="Structured decisions for each part with reasoning",
+You MUST provide a decision for every part listed: {', '.join(mpn_list)}
+
+IMPORTANT: Return your response as a JSON object with this exact structure:
+{{
+  "decisions": [
+    {{
+      "mpn": "PART_NUMBER",
+      "decision": "APPROVED" or "REJECTED",
+      "reasoning": "Detailed technical evaluation",
+      "concerns": ["list", "of", "concerns"],
+      "approved_alternates": ["list", "of", "alternates"]
+    }}
+  ]
+}}""",
+            expected_output="JSON object with decisions array containing engineering decisions for each part",
             agent=self.agent,
             output_pydantic=EngineeringBatchResult,
         )
@@ -133,10 +146,24 @@ You MUST provide a decision for every part listed: {', '.join(mpn_list)}""",
         crew = Crew(
             agents=[self.agent],
             tasks=[task],
-            verbose=False,
+            verbose=True,
         )
 
+        # Log full prompt
+        logger.info("=" * 80)
+        logger.info("ENGINEERING AGENT - LLM REQUEST")
+        logger.info("=" * 80)
+        logger.info(f"PROMPT:\n{task.description}")
+        logger.info("=" * 80)
+
         result = await crew.kickoff_async()
+
+        # Log full response
+        logger.info("=" * 80)
+        logger.info("ENGINEERING AGENT - LLM RESPONSE")
+        logger.info("=" * 80)
+        logger.info(f"RAW RESPONSE:\n{result.raw}")
+        logger.info("=" * 80)
 
         # Access the structured pydantic output
         if not result.pydantic:

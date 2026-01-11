@@ -1,0 +1,28 @@
+project_name: "Test Project"
+product_type: consumer
+quantity: 50
+budget_total: 5000
+deadline: "2025-03-01"
+
+compliance:
+  standards:
+    - RoHS
+  quality_class: "IPC Class 2"
+
+sourcing_constraints:
+  allow_brokers: false
+  allow_alternates: true
+  single_source_ok: true
+  preferred_distributors:
+    - digikey
+    - mouser
+  max_lead_time_days: 21
+
+engineering_context:
+  notes: "Simple test project"
+  critical_parts: []
+  preferred_manufacturers:
+    capacitors: [Murata, TDK]
+    resistors: [Yageo, Vishay]
+    mcu: [STMicroelectronics]
+    connectors: []

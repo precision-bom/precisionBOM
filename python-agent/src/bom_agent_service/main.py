@@ -1,31 +1,64 @@
 """FastAPI server for BOM Agent Service."""
 
 import logging
+import os
 import time
 import uuid
 from contextlib import asynccontextmanager
+from datetime import datetime
+from logging.handlers import RotatingFileHandler
+from pathlib import Path
 from typing import Optional
 
 from fastapi import Depends, FastAPI, HTTPException
 
-# Configure logging
+# Configure logging with file output
+LOG_DIR = Path(__file__).parent.parent.parent.parent / "logs"
+LOG_DIR.mkdir(exist_ok=True)
+
+# Create formatters
+log_format = "%(asctime)s [%(name)s] %(levelname)s: %(message)s"
+date_format = "%Y-%m-%d %H:%M:%S"
+
+# Console handler
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+console_handler.setFormatter(logging.Formatter(log_format, datefmt="%H:%M:%S"))
+
+# File handler with rotation (10MB max, keep 5 backups)
+log_file = LOG_DIR / f"bom_agent_{datetime.now().strftime('%Y%m%d')}.log"
+file_handler = RotatingFileHandler(
+    log_file,
+    maxBytes=10 * 1024 * 1024,  # 10MB
+    backupCount=5,
+    encoding="utf-8",
+)
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(logging.Formatter(log_format, datefmt=date_format))
+
+# Configure root logger
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(name)s] %(levelname)s: %(message)s",
-    datefmt="%H:%M:%S",
+    level=logging.DEBUG,
+    format=log_format,
+    datefmt=date_format,
+    handlers=[console_handler, file_handler],
 )
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from .api import projects_router, knowledge_router, search_router
-from .auth import require_api_key
+from .api import projects_router, knowledge_router, search_router, api_keys_router, clients_router, admin_router
+from .auth import get_current_identity
+from .db import init_db
 from .flows.bom_flow import initialize_agents
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Initialize agents on startup."""
+    """Initialize database and agents on startup."""
     print("Starting BOM Agent Service...")
+    print("Connecting to database...")
+    init_db()
+    print("Database connected.")
     initialize_agents()
     print("Ready to process BOMs!")
     yield
@@ -49,9 +82,14 @@ app.add_middleware(
 )
 
 # Include API routers with authentication
-app.include_router(projects_router, dependencies=[Depends(require_api_key)])
-app.include_router(knowledge_router, dependencies=[Depends(require_api_key)])
-app.include_router(search_router, dependencies=[Depends(require_api_key)])
+app.include_router(projects_router, dependencies=[Depends(get_current_identity)])
+app.include_router(knowledge_router, dependencies=[Depends(get_current_identity)])
+app.include_router(search_router, dependencies=[Depends(get_current_identity)])
+app.include_router(api_keys_router, dependencies=[Depends(get_current_identity)])
+app.include_router(clients_router, dependencies=[Depends(get_current_identity)])
+
+# Admin router has its own authentication via ADMIN_API_KEY
+app.include_router(admin_router)
 
 
 # =============================================================================
@@ -124,7 +162,7 @@ def detect_task_type(messages: list[ChatMessage]) -> tuple[str, str, str]:
         return "general_chat", system_content, user_content
 
 
-@app.post("/v1/chat/completions", response_model=ChatCompletionResponse, dependencies=[Depends(require_api_key)])
+@app.post("/v1/chat/completions", response_model=ChatCompletionResponse, dependencies=[Depends(get_current_identity)])
 async def create_chat_completion(request: ChatCompletionRequest):
     """OpenAI-compatible chat completions endpoint."""
     try:
@@ -160,7 +198,7 @@ async def create_chat_completion(request: ChatCompletionRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/v1/models", dependencies=[Depends(require_api_key)])
+@app.get("/v1/models", dependencies=[Depends(get_current_identity)])
 async def list_models():
     """List available models."""
     return {
