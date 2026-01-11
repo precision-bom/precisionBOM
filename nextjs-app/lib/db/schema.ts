@@ -38,7 +38,19 @@ export const emailVerificationTokens = pgTable("email_verification_tokens", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+// Lead capture for funnel/newsletter signups
+export const leads = pgTable("leads", {
+  id: text("id").primaryKey(), // nanoid
+  email: text("email").notNull().unique(),
+  source: text("source").default("landing"), // where they signed up from
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  convertedToUser: boolean("converted_to_user").default(false),
+  notes: text("notes"), // optional: any additional info captured
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Session = typeof sessions.$inferSelect;
+export type Lead = typeof leads.$inferSelect;
+export type NewLead = typeof leads.$inferInsert;

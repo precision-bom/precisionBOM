@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { GeometricBackground } from "@/components/ui/geometric-background";
+import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 
 // Parallax section wrapper
 function ParallaxSection({
@@ -432,6 +433,14 @@ export default function LandingPage() {
               <p className="font-sans text-neutral-400 text-base max-w-md mx-auto mb-8 relative z-10">
                 Start with our free tier. No credit card required.
                 Be an early adopter and help shape the product.
+              </p>
+
+              <div className="mb-8 relative z-10">
+                <LeadCaptureForm source="landing-cta" />
+              </div>
+
+              <p className="font-mono text-xs text-neutral-500 mb-4 relative z-10">
+                — OR —
               </p>
 
               <Link
