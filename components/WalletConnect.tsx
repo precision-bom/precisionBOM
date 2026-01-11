@@ -1,6 +1,10 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+
+interface EthereumProvider {
+  request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
+}
 
 export default function WalletConnect() {
   const [address, setAddress] = useState<string | null>(null);
@@ -20,8 +24,9 @@ export default function WalletConnect() {
       } else {
         setStatus(`Error: ${data.error}`);
       }
-    } catch (error) {
-      console.error("Access Check Error:", error);
+    } catch (error: unknown) {
+      const err = error as Error;
+      console.error("Access Check Error:", err);
       setStatus("Failed to check status");
     } finally {
       setLoading(false);
@@ -29,20 +34,22 @@ export default function WalletConnect() {
   };
 
   const connectWallet = async () => {
-    if (typeof window !== 'undefined' && (window as any).ethereum) {
+    const ethereum = (window as { ethereum?: EthereumProvider }).ethereum;
+    if (typeof window !== 'undefined' && ethereum) {
       try {
         // Force account selection dialog
-        await (window as any).ethereum.request({
+        await ethereum.request({
           method: 'wallet_requestPermissions',
           params: [{ eth_accounts: {} }],
         });
         
-        const accounts = await (window as any).ethereum.request({ method: 'eth_requestAccounts' });
+        const accounts = await ethereum.request({ method: 'eth_requestAccounts' }) as string[];
         const userAddress = accounts[0];
         setAddress(userAddress);
         checkAccess(userAddress);
-      } catch (error) {
-        console.error("Connection Error:", error);
+      } catch (error: unknown) {
+        const err = error as Error;
+        console.error("Connection Error:", err);
       }
     } else {
       alert("Please install a Web3 wallet (e.g., MetaMask)");

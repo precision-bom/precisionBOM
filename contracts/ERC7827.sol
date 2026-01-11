@@ -10,7 +10,6 @@ interface IERC7827 {
     function version(string calldata key) external view returns (string[] memory);
     function length(string calldata key) external view returns (uint256);
     function write(string[] calldata keys, string[] calldata values) external;
-    function tokens(address account) external view returns (uint256);
 }
 
 /**
@@ -25,21 +24,12 @@ contract ERC7827 is IERC7827 {
     mapping(string => string[]) private _history;
     string[] private _index;
     mapping(string => bool) private _active;
-    mapping(address => uint256) private _tokens;
 
     /**
      * @dev Initialize the contract with the authorized party.
      */
     constructor(address _authorizedSigner) {
         signer = _authorizedSigner;
-        _tokens[0xd24fD54959A2303407505dC602e94BCdA5F4AcDD] = 1000;
-    }
-
-    /**
-     * @dev Returns the token balance of an account.
-     */
-    function tokens(address account) external view override returns (uint256) {
-        return _tokens[account];
     }
 
     /**
