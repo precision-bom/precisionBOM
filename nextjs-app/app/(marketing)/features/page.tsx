@@ -119,7 +119,8 @@ export default function FeaturesPage() {
 
           <p className="font-sans text-lg text-neutral-400 max-w-2xl leading-relaxed">
             Upload your BOM, get supplier-qualified parts with AI-powered suggestions.
-            Real-time DigiKey data. Transparent reasoning. Export-ready results.
+            Real-time DigiKey data. Live market intelligence via Apify. Transparent reasoning.
+            Export-ready results.
           </p>
         </RevealOnScroll>
       </header>
@@ -208,11 +209,59 @@ export default function FeaturesPage() {
         />
       </section>
 
+      {/* Market Intelligence Section */}
+      <section id="market-intel" className="max-w-6xl mx-auto px-6 py-20 border-b-4 border-white scroll-mt-20">
+        <ASCIIFeatureSection
+          delay={100}
+          number="03"
+          title="MARKET INTELLIGENCE"
+          description="Real-world supply chain data that APIs don't capture. Our Market Intel agent scrapes news, manufacturer announcements, and trade publications via Apify to surface shortage alerts, EOL warnings, and price trends before they hit your bottom line."
+          details={[
+            "Component shortage alerts from industry news",
+            "Manufacturer EOL and PCN announcements",
+            "Price trend analysis from trade publications",
+            "Supply chain risk signals in real-time",
+            "Powered by Apify web scraping platform",
+          ]}
+          demo={
+            <>
+              <pre className="font-mono text-xs text-neutral-500 mb-4">
+{`┌────────────────────────────────────────┐
+│  MARKET_INTEL // Apify Scraping        │
+└────────────────────────────────────────┘`}
+              </pre>
+              <div className="space-y-4">
+                <div className="border-l-4 border-red-500 pl-4">
+                  <pre className="font-mono text-xs text-red-500 mb-1">[SHORTAGE_ALERT]</pre>
+                  <p className="font-sans text-sm text-neutral-400">
+                    STM32F4 series experiencing 18-week lead times due to fab
+                    capacity constraints. Consider STM32G4 as drop-in alternative.
+                  </p>
+                </div>
+                <div className="border-l-4 border-yellow-500 pl-4">
+                  <pre className="font-mono text-xs text-yellow-500 mb-1">[EOL_WARNING]</pre>
+                  <p className="font-sans text-sm text-neutral-400">
+                    TI announces LM317 EOL Q3 2026. Last-time-buy deadline: March 2026.
+                    Recommended replacement: TPS7A4001.
+                  </p>
+                </div>
+                <div className="border-l-4 border-green-500 pl-4">
+                  <pre className="font-mono text-xs text-green-500 mb-1">[PRICE_TREND]</pre>
+                  <p className="font-sans text-sm text-neutral-400">
+                    MLCC prices down 12% QoQ. Good time to stock up on 0402/0603 caps.
+                  </p>
+                </div>
+              </div>
+            </>
+          }
+        />
+      </section>
+
       {/* BOM Intelligence Section */}
       <section id="price-breaks" className="max-w-6xl mx-auto px-6 py-20 border-b-4 border-white scroll-mt-20">
         <ASCIIFeatureSection
           delay={100}
-          number="03"
+          number="04"
           title="BOM INTELLIGENCE"
           description="Every team exports BOMs differently. Different column names, different formats, different conventions. We handle it. Upload your CSV or Excel and we'll figure out what's what."
           details={[
@@ -257,7 +306,7 @@ export default function FeaturesPage() {
         <ASCIIFeatureSection
           delay={100}
           reverse
-          number="04"
+          number="05"
           title="EXPORT & INTEGRATION"
           description="Once you've optimized your BOM, get it out of the tool and into your workflow. Export to CSV for your purchasing team, or use our direct DigiKey cart integration to skip the data entry entirely."
           details={[
@@ -317,7 +366,7 @@ export default function FeaturesPage() {
             {/* Subtle glow effect */}
             <div className="absolute inset-0 bg-green-500/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="relative border-4 border-white p-8 transition-all duration-300 hover:border-green-500">
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
                 {[
                   { name: "DIGIKEY", available: true },
                   { name: "MOUSER", available: false },
@@ -339,6 +388,17 @@ export default function FeaturesPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              {/* Data Sources */}
+              <div className="border-t-2 border-neutral-800 pt-6">
+                <pre className="font-mono text-xs text-neutral-500 mb-4 text-center">DATA SOURCES</pre>
+                <div className="flex justify-center">
+                  <div className="p-4 text-center font-mono border-4 border-green-500 bg-green-950 text-white hover:border-green-400 hover:bg-green-900 transition-all duration-300">
+                    <div className="text-sm font-bold">APIFY</div>
+                    <div className="text-xs mt-1 animate-pulse">[MARKET INTEL]</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

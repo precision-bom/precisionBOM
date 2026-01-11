@@ -127,7 +127,7 @@ export default function InternalsPage() {
           <pre className="font-mono text-xs text-neutral-500 mb-6">
 {`╔════════════════════════════════════════════════════════════╗
 ║  INTERNALS v1.0 // SYSTEM ARCHITECTURE & IMPLEMENTATION    ║
-║  STATUS: OPERATIONAL    BUILD: 48hrs    TESTS: 45 PASSING  ║
+║  STATUS: OPERATIONAL    BUILD: 30hrs    TESTS: 45 PASSING  ║
 ╚════════════════════════════════════════════════════════════╝`}
           </pre>
 
@@ -138,18 +138,18 @@ export default function InternalsPage() {
           </h1>
 
           <p className="font-sans text-lg text-neutral-400 max-w-3xl leading-relaxed">
-            Three specialized AI agents working in parallel. Real-time supplier APIs.
-            Blockchain audit trails. Built for engineers who want to know exactly
-            how it works.
+            Four specialized AI agents working in parallel. Real-time supplier APIs.
+            Live market intelligence via Apify. Blockchain audit trails. Built for
+            engineers who want to know exactly how it works.
           </p>
 
           {/* Quick stats */}
           <div className="mt-8 flex flex-wrap gap-4">
             {[
-              { label: "Agents", value: "3" },
+              { label: "Agents", value: "4" },
               { label: "Parallel Exec", value: "Yes" },
               { label: "Supplier APIs", value: "3" },
-              { label: "Build Time", value: "48h" },
+              { label: "Build Time", value: "30h" },
             ].map((stat, i) => (
               <div key={i} className="flex items-center gap-2 px-4 py-2 border-2 border-neutral-700">
                 <span className="font-mono text-green-500 text-sm">{stat.value}</span>
@@ -242,17 +242,26 @@ export default function InternalsPage() {
                               │       Octopart      │
                               └──────────┬──────────┘
                                          │
+                              ┌──────────▼──────────┐
+                              │  MARKET INTEL STEP  │
+                              │   (Apify Scraping)  │
+                              │                     │
+                              │ • News Sites        │
+                              │ • Manufacturer URLs │
+                              │ • Trade Publications│
+                              └──────────┬──────────┘
+                                         │
          ┌───────────────────────────────┼───────────────────────────────┐
          │                               │                               │
          ▼                               ▼                               ▼
 ┌─────────────────┐           ┌─────────────────┐           ┌─────────────────┐
 │   ENGINEERING   │           │    SOURCING     │           │    FINANCE      │
 │     AGENT       │           │     AGENT       │           │     AGENT       │
-│                 │           │                 │           │                 │
+│                 │           │  + Market Intel │           │                 │
 │ • RoHS/CE/FDA   │           │ • Lead Times    │           │ • Unit Cost     │
 │ • IPC Class     │           │ • Stock Levels  │           │ • MOQ/Pricing   │
 │ • Lifecycle     │           │ • Supplier Risk │           │ • Budget Fit    │
-│ • Counterfeit   │           │ • Alternates    │           │ • Volume Disc   │
+│ • Counterfeit   │           │ • Shortage News │           │ • Volume Disc   │
 │                 │           │                 │           │                 │
 │ [Pydantic Out]  │           │ [Pydantic Out]  │           │ [Pydantic Out]  │
 └────────┬────────┘           └────────┬────────┘           └────────┬────────┘
@@ -264,7 +273,7 @@ export default function InternalsPage() {
                             │   FINAL DECISION    │
                             │       AGENT         │
                             │                     │
-                            │ Synthesizes all 3   │
+                            │ Synthesizes all 4   │
                             │ perspectives into   │
                             │ ranked strategies   │
                             └──────────┬──────────┘
@@ -274,14 +283,14 @@ export default function InternalsPage() {
                             │    (ERC-7827)       │
                             └─────────────────────┘
 `}
-          description="Three specialized agents run in TRUE parallel using asyncio.gather(). Each agent
-          outputs structured Pydantic models - no hallucination possible. The Final Decision Agent
-          synthesizes Engineering (compliance), Sourcing (supply chain), and Finance (budget)
-          perspectives into actionable, ranked sourcing strategies."
+          description="Four specialized agents run in TRUE parallel using asyncio.gather(). Market Intel
+          gathers real-world news via Apify before the parallel agent step. Each agent outputs structured
+          Pydantic models - no hallucination possible. The Final Decision Agent synthesizes Engineering
+          (compliance), Sourcing (supply chain + market intel), and Finance (budget) into ranked strategies."
           stats={[
-            { label: "Agents", value: "3+1" },
+            { label: "Agents", value: "4+1" },
             { label: "Execution", value: "Parallel" },
-            { label: "Output", value: "Pydantic" },
+            { label: "Intel Source", value: "Apify" },
             { label: "Framework", value: "CrewAI" },
           ]}
         />
@@ -296,7 +305,28 @@ export default function InternalsPage() {
 └────────────────────────────────────────┘`}
           </pre>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Market Intel Agent */}
+            <div className="border-4 border-green-500 bg-green-950/20 hover:border-green-400 transition-all duration-300 p-6 group">
+              <pre className="font-mono text-green-400 text-sm mb-4">[00] MARKET INTEL</pre>
+              <span className="font-mono text-xs text-green-500 border border-green-500/50 px-2 py-0.5 mb-4 inline-block">APIFY</span>
+              <pre className="font-mono text-xs text-neutral-400 mb-4 whitespace-pre-wrap">
+{`┌─────────────────────┐
+│  REAL-WORLD DATA    │
+├─────────────────────┤
+│ ✓ Shortage Alerts   │
+│ ✓ Price Trends      │
+│ ✓ Mfr News          │
+│ ✓ EOL Announce      │
+│ ✓ Supply Signals    │
+│ ✓ Trade News        │
+└─────────────────────┘`}
+              </pre>
+              <p className="font-sans text-sm text-neutral-500">
+                Scrapes news, manufacturer sites, and trade publications via Apify for real-world intel.
+              </p>
+            </div>
+
             {/* Engineering Agent */}
             <div className="border-4 border-white hover:border-green-500 transition-all duration-300 p-6 group">
               <pre className="font-mono text-green-500 text-sm mb-4">[01] ENGINEERING</pre>
@@ -328,12 +358,12 @@ export default function InternalsPage() {
 │ ✓ Stock Levels      │
 │ ✓ Supplier Trust    │
 │ ✓ Multi-Source OK?  │
-│ ✓ Broker Policy     │
+│ ✓ Market Intel      │
 │ ✓ Alt Parts Avail   │
 └─────────────────────┘`}
               </pre>
               <p className="font-sans text-sm text-neutral-500">
-                Evaluates supply chain risk, checks stock across distributors, suggests alternates.
+                Evaluates supply chain risk with market intel, checks stock, suggests alternates.
               </p>
             </div>
 
@@ -489,9 +519,9 @@ WHY BLOCKCHAIN?
             <TechBadge name="Python 3.12" category="Runtime" />
             <TechBadge name="CrewAI" category="Agents" />
             <TechBadge name="OpenAI GPT" category="LLM" />
+            <TechBadge name="Apify" category="Web Scraping" />
             <TechBadge name="Pydantic" category="Validation" />
             <TechBadge name="Neon" category="Database" />
-            <TechBadge name="Drizzle" category="ORM" />
             <TechBadge name="Ethereum" category="Blockchain" />
           </div>
 
@@ -505,7 +535,7 @@ WHY BLOCKCHAIN?
 
             <div className="grid md:grid-cols-4 gap-8 text-center">
               <div>
-                <div className="font-mono text-4xl text-green-400 font-bold">48</div>
+                <div className="font-mono text-4xl text-green-400 font-bold">30</div>
                 <div className="font-mono text-sm text-neutral-400">HOURS TO BUILD</div>
               </div>
               <div>
@@ -517,7 +547,7 @@ WHY BLOCKCHAIN?
                 <div className="font-mono text-sm text-neutral-400">SUPPLIER APIs</div>
               </div>
               <div>
-                <div className="font-mono text-4xl text-green-400 font-bold">4</div>
+                <div className="font-mono text-4xl text-green-400 font-bold">5</div>
                 <div className="font-mono text-sm text-neutral-400">AI AGENTS</div>
               </div>
             </div>
@@ -756,44 +786,49 @@ WHY BLOCKCHAIN?
             </div>
           </div>
 
-          {/* Apify Integration - Coming Soon */}
-          <div className="border-4 border-dashed border-neutral-700 hover:border-green-500/50 transition-all duration-300 p-8">
+          {/* Apify Integration - LIVE */}
+          <div className="border-4 border-green-500 hover:border-green-400 transition-all duration-300 p-8 bg-green-950/20">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
-                <div className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse" />
-                <pre className="font-mono text-yellow-500 text-lg font-bold">APIFY INTEGRATION</pre>
-                <span className="font-mono text-xs text-neutral-600 border border-neutral-700 px-2 py-1">[ROADMAP]</span>
+                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+                <pre className="font-mono text-green-500 text-lg font-bold">APIFY</pre>
+                <span className="font-mono text-xs text-green-400 border border-green-500 px-2 py-1 animate-pulse">[HACKATHON SPONSOR]</span>
               </div>
             </div>
-            <pre className="font-mono text-xs text-neutral-500 mb-6 whitespace-pre-wrap">
+            <pre className="font-mono text-xs text-neutral-400 mb-6 whitespace-pre-wrap">
 {`┌─────────────────────────────────────────────────────────────────────────┐
-│  PLANNED: REAL-TIME SUPPLIER SCRAPING                                   │
+│  LIVE: MARKET INTELLIGENCE AGENT                                        │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
 │   apify.com - Web Scraping at Scale                                     │
 │   ─────────────────────────────────                                     │
 │                                                                         │
-│   Current State:          Planned Integration:                          │
-│   ───────────────         ────────────────────                          │
-│   DigiKey API ────────►   DigiKey API + Scraper Fallback                │
-│   Mouser API  ────────►   Mouser API + Scraper Fallback                 │
-│   Octopart API ───────►   Octopart + Direct Manufacturer Scraping       │
+│   ┌─────────────────┐     ┌─────────────────────────────────────────┐   │
+│   │  APIFY ACTORS   │────▶│  MARKET INTELLIGENCE AGENT              │   │
+│   │                 │     │                                         │   │
+│   │ • Web Scraper   │     │  Gathers real-world supply chain data:  │   │
+│   │ • News Scraper  │     │  ├── Component shortage alerts          │   │
+│   │ • Site Crawler  │     │  ├── Manufacturer news & updates        │   │
+│   │                 │     │  ├── Price trend analysis               │   │
+│   └─────────────────┘     │  ├── EOL/lifecycle announcements        │   │
+│                           │  └── Supply chain risk signals          │   │
+│                           └─────────────────────────────────────────┘   │
 │                                                                         │
-│   NEW CAPABILITIES:                                                     │
-│   ├── Scrape manufacturer sites directly (TI, STM, Murata)             │
-│   ├── Monitor competitor pricing in real-time                          │
-│   ├── Extract datasheets and compliance docs automatically             │
-│   ├── Track inventory across 50+ regional distributors                 │
-│   └── Anti-blocking proxy rotation for reliable data                   │
+│   INTEGRATION FLOW:                                                     │
+│   ├── BOM Upload → Extract MPNs & Manufacturers                        │
+│   ├── Apify scrapes news sites, manufacturer pages, trade publications │
+│   ├── MarketIntelAgent analyzes scraped content with LLM               │
+│   ├── Generates risk alerts, shortage warnings, price trends           │
+│   └── Factors real-world intel into SourcingAgent recommendations      │
 │                                                                         │
-│   13,000+ pre-built scrapers in Apify marketplace                       │
+│   13,000+ pre-built scrapers │ Real-time data │ Proxy rotation          │
 │                                                                         │
 └─────────────────────────────────────────────────────────────────────────┘`}
             </pre>
-            <p className="font-sans text-sm text-neutral-500">
-              Next phase: Integrate Apify for comprehensive supplier scraping when APIs
-              are unavailable or rate-limited. Direct manufacturer data extraction
-              for parts not in distributor catalogs.
+            <p className="font-sans text-sm text-neutral-400">
+              Apify powers our Market Intelligence Agent, scraping electronics news,
+              manufacturer announcements, and supply chain publications to surface
+              real-world risks and opportunities that APIs don't capture.
             </p>
           </div>
 
@@ -819,12 +854,12 @@ WHY BLOCKCHAIN?
                 <div className="font-mono text-xs text-neutral-400">DEPLOYMENTS</div>
               </div>
               <div>
-                <div className="font-mono text-3xl text-green-400 font-bold">3.75x</div>
-                <div className="font-mono text-xs text-neutral-400">SPEED GAIN</div>
+                <div className="font-mono text-3xl text-green-400 font-bold">5</div>
+                <div className="font-mono text-xs text-neutral-400">AI AGENTS</div>
               </div>
               <div>
-                <div className="font-mono text-3xl text-green-400 font-bold">5</div>
-                <div className="font-mono text-xs text-neutral-400">AI TOOLS USED</div>
+                <div className="font-mono text-3xl text-green-400 font-bold">6</div>
+                <div className="font-mono text-xs text-neutral-400">SPONSOR TOOLS</div>
               </div>
             </div>
           </div>

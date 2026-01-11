@@ -54,7 +54,17 @@
 
 ## 30-Second Pitch
 
-"Hardware engineers spend 40+ hours per project manually sourcing components. Supply chain volatility, compliance requirements, and budget constraints make this painful. PrecisionBOM uses a multi-agent AI system - Engineering, Sourcing, and Finance agents working in parallel - to analyze your BOM, search real-time inventory from DigiKey/Mouser/Octopart, and generate optimized sourcing strategies. We also create an immutable blockchain audit trail for regulated industries like medical devices. Built this weekend with CrewAI, FastAPI, and Next.js."
+"Hardware engineers spend 40+ hours per project manually sourcing components. Supply chain volatility, compliance requirements, and budget constraints make this painful. PrecisionBOM uses a multi-agent AI system - Engineering, Sourcing, Finance, and Market Intelligence agents working in parallel - to analyze your BOM, search real-time inventory from DigiKey/Mouser/Octopart, and generate optimized sourcing strategies. Our Market Intel agent uses Apify to scrape real-world supply chain news, shortage alerts, and manufacturer announcements. We also create an immutable blockchain audit trail for regulated industries like medical devices. Built this weekend with CrewAI, FastAPI, Next.js, and Apify."
+
+## Sponsor Integrations
+
+| Sponsor | Integration Status | Description |
+|---------|-------------------|-------------|
+| **Apify** | LIVE | Market Intelligence Agent - scrapes news, manufacturer sites, trade publications for supply chain insights |
+| Cline | LIVE | AI-powered code generation - built 17,149 lines of code across 4 deployments |
+| OpenAI + CrewAI | LIVE | Multi-agent orchestration with GPT-4o for inference |
+| Rilo | LIVE | Lead acquisition automation |
+| AI Native Studio | LIVE | Rapid prototyping and code quality analysis |
 
 ## Team
 
