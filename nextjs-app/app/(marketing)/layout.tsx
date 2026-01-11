@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import WalletConnect from "@/components/WalletConnect";
 
 export default function MarketingLayout({
@@ -13,19 +14,15 @@ export default function MarketingLayout({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 group">
-              <pre className="font-mono text-xs leading-none hidden sm:block">
-                <span className="text-green-500">{`┌─┐`}</span>
-                {"\n"}
-                <span className="text-green-500">{`│`}</span>
-                <span className="text-green-400 animate-pulse">●</span>
-                <span className="text-green-500">{`│`}</span>
-                {"\n"}
-                <span className="text-green-500">{`└─┘`}</span>
-              </pre>
-              <span className="font-mono text-lg font-bold tracking-tighter group-hover:text-green-500 transition-colors">
-                PRECISION<span className="text-green-500">BOM</span>
-              </span>
+            <Link href="/" className="flex items-center group">
+              <Image
+                src="/precision-bom-logo.svg"
+                alt="PrecisionBOM"
+                width={180}
+                height={36}
+                className="h-9 w-auto"
+                priority
+              />
             </Link>
 
             {/* Navigation Links */}
