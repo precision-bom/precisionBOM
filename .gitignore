@@ -34,3 +34,23 @@ drizzle/
 *.tsbuildinfo
 .managed_wallet.json
 .env
+.env.local
+.env.production
+.env.production.local
+next-env.d.ts
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+ENV/
+env/

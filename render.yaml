@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: bom-agent-service
+    runtime: python
+    rootDir: python-agent
+    buildCommand: pip install uv && uv sync
+    startCommand: uv run uvicorn bom_agent_service.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.12"
+      - key: PORT
+        value: "8000"
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: APIFY_API_TOKEN
+        sync: false

@@ -31,6 +31,13 @@ from .knowledge import (
     CategoryKnowledge,
     StoreUpdate,
 )
+from .api_key import ApiKey
+from .market_intel import (
+    IntelCategory,
+    IntelSentiment,
+    MarketIntelItem,
+    MarketIntelReport,
+)
 
 __all__ = [
     # Enums
@@ -60,4 +67,11 @@ __all__ = [
     "SupplierKnowledge",
     "CategoryKnowledge",
     "StoreUpdate",
+    # Market Intelligence
+    "IntelCategory",
+    "IntelSentiment",
+    "MarketIntelItem",
+    "MarketIntelReport",
+    # Auth
+    "ApiKey",
 ]
