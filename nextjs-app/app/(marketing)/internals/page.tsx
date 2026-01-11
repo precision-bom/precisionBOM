@@ -747,9 +747,12 @@ WHY BLOCKCHAIN?
 │                                     │
 └─────────────────────────────────────┘`}
               </pre>
-              <p className="font-sans text-sm text-neutral-500">
+              <p className="font-sans text-sm text-neutral-500 line-through">
                 Rilo turned our lead acquisition from manual outreach to automated
                 workflows. Describe what you want in plain English, get signups.
+              </p>
+              <p className="font-sans text-xs text-neutral-400 italic mt-2">
+                Note: Founder was unavailable
               </p>
             </div>
 
@@ -768,14 +771,9 @@ WHY BLOCKCHAIN?
 │   ────────────────────────────      │
 │                                     │
 │   Used for:                         │
-│   ├── Rapid prototyping             │
 │   ├── Code quality analysis         │
 │   ├── AI-assisted debugging         │
 │   └── Architecture exploration      │
-│                                     │
-│   Rating: ⭐ 4.9/5 (127 reviews)    │
-│                                     │
-│   "Quantum-enhanced code analysis"  │
 │                                     │
 └─────────────────────────────────────┘`}
               </pre>
