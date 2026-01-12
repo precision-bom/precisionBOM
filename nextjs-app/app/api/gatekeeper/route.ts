@@ -23,7 +23,7 @@ const CLICKWRAP_MESSAGE = (nonce: string) => `PrecisionBOM Terminal Access & Sou
 
 export async function POST(request: Request) {
   try {
-    const { address, signature, nonce } = await request.json();
+    const { address, signature, nonce, action, amount } = await request.json();
 
     if (!address || !signature || !nonce) {
       return NextResponse.json({ error: 'Missing identity parameters' }, { status: 400 });
@@ -38,24 +38,50 @@ export async function POST(request: Request) {
     const provider = new ethers.JsonRpcProvider(process.env.SEPOLIA_RPC_URL || "https://ethereum-sepolia-rpc.publicnode.com");
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
     
-    // 2. Tier 1: Registry Check
+    // 2. Fetch Current State
     const jsonStateString = await contract.json();
     const state = JSON.parse(jsonStateString);
     const lowerAddress = address.toLowerCase();
     const expirationDateStr = state[lowerAddress];
-    const tokenBalance = state[`${lowerAddress}_tokens`] || "0";
+    const tokenBalance = parseInt(state[`${lowerAddress}_tokens`] || "0");
     const now = new Date();
 
+    // ACTION: DEDUCT (For AI Strikes)
+    if (action === 'deduct' && amount) {
+      if (tokenBalance < amount) {
+        return NextResponse.json({ error: '402 Payment Required', message: 'Insufficient thermodynamic capital.', tokens: tokenBalance.toString() }, { status: 402 });
+      }
+
+      if (process.env.PRIVATE_KEY) {
+        const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+        const contractWithSigner = contract.connect(wallet) as any;
+        const newTokenBalance = Math.max(0, tokenBalance - amount).toString();
+        const tokenKey = `${lowerAddress}_tokens`;
+
+        // Background write strike
+        contractWithSigner.write([tokenKey], [newTokenBalance])
+          .then((tx: any) => console.log(`[STRIKE DEDUCT] -${amount} Tokens for ${address}: ${tx.hash}`))
+          .catch((err: any) => console.error(`[DEDUCT ERROR]`, err));
+
+        return NextResponse.json({ 
+          status: '200 OK', 
+          message: 'Strike Deducted',
+          tokens: newTokenBalance
+        });
+      }
+    }
+
+    // DEFAULT ACTION: VERIFY/SYNC
     if (expirationDateStr && new Date(expirationDateStr) > now) {
       return NextResponse.json({ 
         status: '200 OK', 
         message: 'Access Granted: Registry Verified',
         expiration: expirationDateStr,
-        tokens: tokenBalance
+        tokens: tokenBalance.toString()
       });
     }
 
-    // 3. Tier 2: Ledger Audit
+    // Tier 2: Ledger Audit
     console.log(`[LEDGER AUDIT] Scanning Sepolia for ${address}...`);
     const apiKey = process.env.ETHERSCAN_API_KEY || "YourApiKeyToken";
     const etherscanUrl = `https://api-sepolia.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=desc&apikey=${apiKey}`;
@@ -64,33 +90,25 @@ export async function POST(request: Request) {
     const ethData = await ethResponse.json();
 
     let validTx: EtherscanTx | undefined;
-
     if (ethData.status === "1" && Array.isArray(ethData.result)) {
       validTx = (ethData.result as EtherscanTx[]).find((tx) => 
         tx.to.toLowerCase() === VAULT_ADDRESS.toLowerCase() && 
-        BigInt(tx.value) >= FEE_WEI && // Accept any payment >= 0.001 ETH
+        BigInt(tx.value) >= FEE_WEI &&
         tx.isError === "0"
       );
     }
 
     if (validTx) {
-      console.log(`[PAYMENT DISCOVERED] Found: ${validTx.hash}`);
-      
       const paymentDate = new Date(parseInt(validTx.timeStamp) * 1000);
       const newExpiration = new Date(paymentDate.getTime() + 30 * 24 * 60 * 60 * 1000);
       const newExpirationStr = newExpiration.toISOString().split('T')[0];
 
-      // 4. Tier 3: Auto-Write (Fire and Forget or Wait)
       if (process.env.PRIVATE_KEY) {
-        console.log(`[SYNC STRIKE] Syncing substrate for ${address}...`);
         const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
         const contractWithSigner = contract.connect(wallet) as any;
         const tokenKey = `${lowerAddress}_tokens`;
-
-        // We trigger the write strike but return success to the user immediately
-        // so they don't have to wait for the transaction to mine if Tier 2 passes.
         contractWithSigner.write([lowerAddress, tokenKey], [newExpirationStr, "1000"])
-          .then((tx: any) => console.log(`[TX SENT] Strike: ${tx.hash}`))
+          .then((tx: any) => console.log(`[SYNC STRIKE] ${tx.hash}`))
           .catch((err: any) => console.error(`[SYNC ERROR]`, err));
       }
 
@@ -98,16 +116,14 @@ export async function POST(request: Request) {
         status: '200 OK', 
         message: 'Access Granted: Ledger Verified',
         expiration: newExpirationStr,
-        tokens: "1000",
-        strike_tx: validTx.hash
+        tokens: "1000"
       });
     }
 
-    // PAYMENT REQUIRED
     return NextResponse.json({ 
       error: '402 Payment Required', 
       message: 'Subscription strike required.',
-      tokens: tokenBalance
+      tokens: tokenBalance.toString()
     }, { status: 402 });
 
   } catch (error: any) {
