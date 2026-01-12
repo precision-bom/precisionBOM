@@ -130,9 +130,14 @@ export default function FileUpload({ onSuggestionsReady }: FileUploadProps) {
 
   return (
     <div className="bg-substrate-900 border border-substrate-700 rounded-lg p-6">
-      <h2 className="text-lg font-mono font-semibold text-silkscreen mb-4 uppercase tracking-tighter">
-        Execute Sourcing Strike
-      </h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-mono font-semibold text-silkscreen uppercase tracking-tighter">
+          Execute Sourcing Strike
+        </h2>
+        <span className="text-[10px] text-trace-500 font-bold border border-trace-500/30 px-2 py-0.5 rounded">
+          COST: 50 T
+        </span>
+      </div>
 
       {/* Drag and drop area */}
       <div
@@ -219,7 +224,7 @@ export default function FileUpload({ onSuggestionsReady }: FileUploadProps) {
             Synchronizing...
           </span>
         ) : (
-          "Authorize & Source BOM"
+          "Authorize & Source BOM (-50 T)"
         )}
       </button>
 
